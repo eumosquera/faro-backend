@@ -69,8 +69,19 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return response;
     }
 
-    if ('message' in response && typeof response.message === 'string') {
+    if (!('message' in response)) {
+      return 'Request failed';
+    }
+
+    if (typeof response.message === 'string') {
       return response.message;
+    }
+
+    if (
+      Array.isArray(response.message) &&
+      response.message.every((message) => typeof message === 'string')
+    ) {
+      return response.message.join(', ');
     }
 
     return 'Request failed';

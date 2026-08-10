@@ -3,9 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 import { AppModule } from './app.module';
-
 import type { EnvSchema } from './core/config/env.schema';
-
+import { setupSwagger } from './core/documentation/swagger.config';
 import { GlobalExceptionFilter } from './core/errors/global-exception.filter';
 
 async function bootstrap(): Promise<void> {
@@ -32,6 +31,7 @@ async function bootstrap(): Promise<void> {
   );
 
   app.useGlobalFilters(new GlobalExceptionFilter());
+  setupSwagger(app);
 
   const port = configService.get('PORT', { infer: true });
 

@@ -5,6 +5,8 @@ import { validateEnv } from './core/config/env.validation';
 import { HealthController } from './core/health/health.controller';
 import { PrismaModule } from './core/database/prisma.module';
 import { createLoggerModule } from './core/logging/logger.config';
+import { StructureModule } from './modules/structure/structure.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { createLoggerModule } from './core/logging/logger.config';
     }),
     createLoggerModule(),
     PrismaModule,
+    StructureModule,
+    SharedModule,
   ],
   controllers: [HealthController],
   providers: [],

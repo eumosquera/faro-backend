@@ -8,5 +8,10 @@
  * 🟢 You can import this file directly.
  */
 
-// This file is empty because there are no enums in the schema.
-export {};
+export const ResidentialComplexStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+} as const;
+
+export type ResidentialComplexStatus =
+  (typeof ResidentialComplexStatus)[keyof typeof ResidentialComplexStatus];

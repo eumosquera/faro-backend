@@ -389,7 +389,9 @@ export type FieldRef<Model, FieldType> = runtime.FieldRef<Model, FieldType>;
 
 type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRef<Model, FieldType>;
 
-export const ModelName = {} as const;
+export const ModelName = {
+  ResidentialComplex: 'ResidentialComplex',
+} as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 
@@ -408,10 +410,87 @@ export type TypeMap<
     omit: GlobalOmitOptions;
   };
   meta: {
-    modelProps: never;
+    modelProps: 'residentialComplex';
     txIsolationLevel: TransactionIsolationLevel;
   };
-  model: {};
+  model: {
+    ResidentialComplex: {
+      payload: Prisma.$ResidentialComplexPayload<ExtArgs>;
+      fields: Prisma.ResidentialComplexFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.ResidentialComplexFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.ResidentialComplexFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        findFirst: {
+          args: Prisma.ResidentialComplexFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.ResidentialComplexFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        findMany: {
+          args: Prisma.ResidentialComplexFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>[];
+        };
+        create: {
+          args: Prisma.ResidentialComplexCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        createMany: {
+          args: Prisma.ResidentialComplexCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.ResidentialComplexCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>[];
+        };
+        delete: {
+          args: Prisma.ResidentialComplexDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        update: {
+          args: Prisma.ResidentialComplexUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        deleteMany: {
+          args: Prisma.ResidentialComplexDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.ResidentialComplexUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.ResidentialComplexUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>[];
+        };
+        upsert: {
+          args: Prisma.ResidentialComplexUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResidentialComplexPayload>;
+        };
+        aggregate: {
+          args: Prisma.ResidentialComplexAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateResidentialComplex>;
+        };
+        groupBy: {
+          args: Prisma.ResidentialComplexGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.ResidentialComplexGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.ResidentialComplexCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.ResidentialComplexCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
+  };
 } & {
   other: {
     payload: any;
@@ -449,6 +528,83 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 
 export type TransactionIsolationLevel =
   (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
+
+export const ResidentialComplexScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+} as const;
+
+export type ResidentialComplexScalarFieldEnum =
+  (typeof ResidentialComplexScalarFieldEnum)[keyof typeof ResidentialComplexScalarFieldEnum];
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc',
+} as const;
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive',
+} as const;
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+/**
+ * Field references
+ */
+
+/**
+ * Reference to a field of type 'String'
+ */
+export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>;
+
+/**
+ * Reference to a field of type 'String[]'
+ */
+export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>;
+
+/**
+ * Reference to a field of type 'ResidentialComplexStatus'
+ */
+export type EnumResidentialComplexStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'ResidentialComplexStatus'
+>;
+
+/**
+ * Reference to a field of type 'ResidentialComplexStatus[]'
+ */
+export type ListEnumResidentialComplexStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'ResidentialComplexStatus[]'
+>;
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>;
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>;
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
 
 /**
  * Batch Payload for updateMany & deleteMany & createMany
@@ -606,7 +762,9 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions =
   PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter;
-export type GlobalOmitConfig = {};
+export type GlobalOmitConfig = {
+  residentialComplex?: Prisma.ResidentialComplexOmit;
+};
 
 /* Types for Logging */
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';

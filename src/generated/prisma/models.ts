@@ -7,4 +7,5 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/ResidentialComplex';
 export type * from './commonInputTypes';

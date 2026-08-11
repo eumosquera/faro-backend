@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { validateEnv } from './core/config/env.validation';
 import { HealthController } from './core/health/health.controller';
+import { createLoggerModule } from './core/logging/logger.config';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { HealthController } from './core/health/health.controller';
       isGlobal: true,
       validate: validateEnv,
     }),
+    createLoggerModule(),
   ],
   controllers: [HealthController],
   providers: [],

@@ -16,6 +16,7 @@ jobs:
   quality:
     name: Quality
     runs-on: ubuntu-latest
+    environment: ci
 
     services:
       postgres:
@@ -34,6 +35,10 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/faro_test?schema=public
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      FARO_TEST_EMAIL: ${{ secrets.FARO_TEST_EMAIL }}
+      FARO_TEST_PASSWORD: ${{ secrets.FARO_TEST_PASSWORD }}
 
     steps:
       - name: Checkout

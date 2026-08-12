@@ -7,6 +7,7 @@ import { PrismaModule } from './core/database/prisma.module';
 import { createLoggerModule } from './core/logging/logger.config';
 import { StructureModule } from './modules/structure/structure.module';
 import { SharedModule } from './shared/shared.module';
+import { SupabaseModule } from './core/auth/supabase.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
     PrismaModule,
     StructureModule,
     SharedModule,
+    SupabaseModule,
   ],
   controllers: [HealthController],
   providers: [],

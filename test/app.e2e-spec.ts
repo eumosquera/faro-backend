@@ -4,12 +4,13 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { createClient } from '@supabase/supabase-js';
 import request from 'supertest';
-
+import { afterEach } from '@jest/globals';
 import { AppModule } from './../src/app.module';
 import { GlobalExceptionFilter } from './../src/core/errors/global-exception.filter';
-
+import { CreateResidentialComplexUseCase } from './../src/modules/structure/application/use-cases/create-residential-complex/create-residential-complex.use-case';
 describe('Application (e2e)', () => {
   let app: INestApplication;
+  let residentialComplexId: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -39,6 +40,20 @@ describe('Application (e2e)', () => {
     app.useGlobalFilters(new GlobalExceptionFilter());
 
     await app.init();
+
+    const createResidentialComplexUseCase = app.get(CreateResidentialComplexUseCase);
+
+    const residentialComplex = await createResidentialComplexUseCase.execute({
+      name: 'E2E Residential Complex',
+      address: 'E2E Test Address',
+      city: 'Cali',
+    });
+
+    residentialComplexId = residentialComplex.id;
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   it('/api/v1/unknown-route (GET)', () => {
@@ -120,6 +135,122 @@ describe('Application (e2e)', () => {
       });
   });
 
+  it('/api/v1/physical-groups (POST) creates a TOWER', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: residentialComplexId,
+        name: 'Torre 1',
+        type: 'TOWER',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        residentialComplexId: residentialComplexId,
+        name: 'Torre 1',
+        type: 'TOWER',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+  });
+
+  it('/api/v1/physical-groups (POST) creates a BLOCK', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: residentialComplexId,
+        name: 'Bloque A',
+        type: 'BLOCK',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        residentialComplexId: residentialComplexId,
+        name: 'Bloque A',
+        type: 'BLOCK',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+    expect(typeof body.id).toBe('string');
+  });
+
+  it('/api/v1/physical-groups (POST) rejects invalid type', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: residentialComplexId,
+        name: 'Torre inválida',
+        type: 'INVALID',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/physical-groups',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/physical-groups (POST) rejects invalid residential complex id', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: '123',
+        name: 'Torre inválida',
+        type: 'TOWER',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/physical-groups',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/physical-groups (POST) returns 404 when residential complex does not exist', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: '00000000-0000-0000-0000-000000000000',
+        name: 'Torre inexistente',
+        type: 'TOWER',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'RESIDENTIAL_COMPLEX_NOT_FOUND',
+            path: '/api/v1/physical-groups',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
   it('/api/v1/auth/me (GET) rejects missing authentication', () => {
     return request(app.getHttpServer())
       .get('/api/v1/auth/me')
@@ -171,7 +302,7 @@ describe('Application (e2e)', () => {
           }),
         );
       });
-  });
+  }, 15000);
 
   it('/api/v1/auth/me (GET) accepts valid Supabase authentication', async () => {
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -213,5 +344,5 @@ describe('Application (e2e)', () => {
       userId: data.user.id,
       email: data.user.email ?? null,
     });
-  });
+  }, 15000);
 });

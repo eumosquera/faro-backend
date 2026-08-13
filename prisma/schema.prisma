@@ -19,6 +19,18 @@ enum PhysicalGroupType {
   BLOCK
 }
 
+enum PrivateUnitType {
+  APARTMENT
+  HOUSE
+  LOCAL
+  OFFICE
+}
+
+enum PrivateUnitStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model ResidentialComplex {
   id      String                   @id @default(uuid())
   name    String
@@ -30,6 +42,7 @@ model ResidentialComplex {
   updatedAt DateTime @updatedAt
 
   physicalGroups PhysicalGroup[]
+  privateUnits   PrivateUnit[]
 }
 
 model PhysicalGroup {
@@ -42,6 +55,26 @@ model PhysicalGroup {
   updatedAt DateTime @updatedAt
 
   residentialComplex ResidentialComplex @relation(fields: [residentialComplexId], references: [id], onDelete: Cascade)
+  privateUnits       PrivateUnit[]
 
   @@index([residentialComplexId])
+}
+
+model PrivateUnit {
+  id                   String            @id @default(uuid())
+  residentialComplexId String
+  physicalGroupId      String?
+  identifier           String
+  type                 PrivateUnitType
+  status               PrivateUnitStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  residentialComplex ResidentialComplex @relation(fields: [residentialComplexId], references: [id], onDelete: Cascade)
+
+  physicalGroup PhysicalGroup? @relation(fields: [physicalGroupId], references: [id], onDelete: SetNull)
+
+  @@index([residentialComplexId])
+  @@index([physicalGroupId])
 }

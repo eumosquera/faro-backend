@@ -10,4 +10,5 @@
  */
 export type * from './models/ResidentialComplex'
 export type * from './models/PhysicalGroup'
+export type * from './models/PrivateUnit'
 export type * from './commonInputTypes'

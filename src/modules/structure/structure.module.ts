@@ -10,8 +10,13 @@ import { PhysicalGroupRepository } from './domain/repositories/physical-group.re
 import { PrismaPhysicalGroupRepository } from './infrastructure/persistence/repositories/prisma-physical-group.repository';
 import { PhysicalGroupController } from './presentation/controllers/physical-group.controller';
 
+import { CreatePrivateUnitUseCase } from './application/use-cases/create-private-unit/create-private-unit.use-case';
+import { PrivateUnitRepository } from './domain/repositories/private-unit.repository';
+import { PrismaPrivateUnitRepository } from './infrastructure/persistence/repositories/prisma-private-unit.repository';
+import { PrivateUnitController } from './presentation/controllers/private-unit.controller';
+
 @Module({
-  controllers: [ResidentialComplexController, PhysicalGroupController],
+  controllers: [ResidentialComplexController, PhysicalGroupController, PrivateUnitController],
   providers: [
     PrismaResidentialComplexRepository,
     {
@@ -26,7 +31,14 @@ import { PhysicalGroupController } from './presentation/controllers/physical-gro
       useExisting: PrismaPhysicalGroupRepository,
     },
     CreatePhysicalGroupUseCase,
+
+    PrismaPrivateUnitRepository,
+    {
+      provide: PrivateUnitRepository,
+      useExisting: PrismaPrivateUnitRepository,
+    },
+    CreatePrivateUnitUseCase,
   ],
-  exports: [CreateResidentialComplexUseCase, CreatePhysicalGroupUseCase],
+  exports: [CreateResidentialComplexUseCase, CreatePhysicalGroupUseCase, CreatePrivateUnitUseCase],
 })
 export class StructureModule {}

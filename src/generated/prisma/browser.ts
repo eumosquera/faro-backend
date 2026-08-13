@@ -27,3 +27,8 @@ export type ResidentialComplex = Prisma.ResidentialComplexModel
  * 
  */
 export type PhysicalGroup = Prisma.PhysicalGroupModel
+/**
+ * Model PrivateUnit
+ * 
+ */
+export type PrivateUnit = Prisma.PrivateUnitModel

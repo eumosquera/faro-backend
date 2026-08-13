@@ -23,3 +23,21 @@ export const PhysicalGroupType = {
 } as const
 
 export type PhysicalGroupType = (typeof PhysicalGroupType)[keyof typeof PhysicalGroupType]
+
+
+export const PrivateUnitType = {
+  APARTMENT: 'APARTMENT',
+  HOUSE: 'HOUSE',
+  LOCAL: 'LOCAL',
+  OFFICE: 'OFFICE'
+} as const
+
+export type PrivateUnitType = (typeof PrivateUnitType)[keyof typeof PrivateUnitType]
+
+
+export const PrivateUnitStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type PrivateUnitStatus = (typeof PrivateUnitStatus)[keyof typeof PrivateUnitStatus]

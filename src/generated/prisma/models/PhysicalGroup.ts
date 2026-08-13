@@ -191,6 +191,7 @@ export type PhysicalGroupWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"PhysicalGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PhysicalGroup"> | Date | string
   residentialComplex?: Prisma.XOR<Prisma.ResidentialComplexScalarRelationFilter, Prisma.ResidentialComplexWhereInput>
+  privateUnits?: Prisma.PrivateUnitListRelationFilter
 }
 
 export type PhysicalGroupOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type PhysicalGroupOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   residentialComplex?: Prisma.ResidentialComplexOrderByWithRelationInput
+  privateUnits?: Prisma.PrivateUnitOrderByRelationAggregateInput
 }
 
 export type PhysicalGroupWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type PhysicalGroupWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"PhysicalGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PhysicalGroup"> | Date | string
   residentialComplex?: Prisma.XOR<Prisma.ResidentialComplexScalarRelationFilter, Prisma.ResidentialComplexWhereInput>
+  privateUnits?: Prisma.PrivateUnitListRelationFilter
 }, "id">
 
 export type PhysicalGroupOrderByWithAggregationInput = {
@@ -247,6 +250,7 @@ export type PhysicalGroupCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   residentialComplex: Prisma.ResidentialComplexCreateNestedOneWithoutPhysicalGroupsInput
+  privateUnits?: Prisma.PrivateUnitCreateNestedManyWithoutPhysicalGroupInput
 }
 
 export type PhysicalGroupUncheckedCreateInput = {
@@ -256,6 +260,7 @@ export type PhysicalGroupUncheckedCreateInput = {
   type: $Enums.PhysicalGroupType
   createdAt?: Date | string
   updatedAt?: Date | string
+  privateUnits?: Prisma.PrivateUnitUncheckedCreateNestedManyWithoutPhysicalGroupInput
 }
 
 export type PhysicalGroupUpdateInput = {
@@ -265,6 +270,7 @@ export type PhysicalGroupUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   residentialComplex?: Prisma.ResidentialComplexUpdateOneRequiredWithoutPhysicalGroupsNestedInput
+  privateUnits?: Prisma.PrivateUnitUpdateManyWithoutPhysicalGroupNestedInput
 }
 
 export type PhysicalGroupUncheckedUpdateInput = {
@@ -274,6 +280,7 @@ export type PhysicalGroupUncheckedUpdateInput = {
   type?: Prisma.EnumPhysicalGroupTypeFieldUpdateOperationsInput | $Enums.PhysicalGroupType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privateUnits?: Prisma.PrivateUnitUncheckedUpdateManyWithoutPhysicalGroupNestedInput
 }
 
 export type PhysicalGroupCreateManyInput = {
@@ -339,6 +346,11 @@ export type PhysicalGroupMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type PhysicalGroupNullableScalarRelationFilter = {
+  is?: Prisma.PhysicalGroupWhereInput | null
+  isNot?: Prisma.PhysicalGroupWhereInput | null
+}
+
 export type PhysicalGroupCreateNestedManyWithoutResidentialComplexInput = {
   create?: Prisma.XOR<Prisma.PhysicalGroupCreateWithoutResidentialComplexInput, Prisma.PhysicalGroupUncheckedCreateWithoutResidentialComplexInput> | Prisma.PhysicalGroupCreateWithoutResidentialComplexInput[] | Prisma.PhysicalGroupUncheckedCreateWithoutResidentialComplexInput[]
   connectOrCreate?: Prisma.PhysicalGroupCreateOrConnectWithoutResidentialComplexInput | Prisma.PhysicalGroupCreateOrConnectWithoutResidentialComplexInput[]
@@ -385,12 +397,29 @@ export type EnumPhysicalGroupTypeFieldUpdateOperationsInput = {
   set?: $Enums.PhysicalGroupType
 }
 
+export type PhysicalGroupCreateNestedOneWithoutPrivateUnitsInput = {
+  create?: Prisma.XOR<Prisma.PhysicalGroupCreateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedCreateWithoutPrivateUnitsInput>
+  connectOrCreate?: Prisma.PhysicalGroupCreateOrConnectWithoutPrivateUnitsInput
+  connect?: Prisma.PhysicalGroupWhereUniqueInput
+}
+
+export type PhysicalGroupUpdateOneWithoutPrivateUnitsNestedInput = {
+  create?: Prisma.XOR<Prisma.PhysicalGroupCreateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedCreateWithoutPrivateUnitsInput>
+  connectOrCreate?: Prisma.PhysicalGroupCreateOrConnectWithoutPrivateUnitsInput
+  upsert?: Prisma.PhysicalGroupUpsertWithoutPrivateUnitsInput
+  disconnect?: Prisma.PhysicalGroupWhereInput | boolean
+  delete?: Prisma.PhysicalGroupWhereInput | boolean
+  connect?: Prisma.PhysicalGroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PhysicalGroupUpdateToOneWithWhereWithoutPrivateUnitsInput, Prisma.PhysicalGroupUpdateWithoutPrivateUnitsInput>, Prisma.PhysicalGroupUncheckedUpdateWithoutPrivateUnitsInput>
+}
+
 export type PhysicalGroupCreateWithoutResidentialComplexInput = {
   id?: string
   name: string
   type: $Enums.PhysicalGroupType
   createdAt?: Date | string
   updatedAt?: Date | string
+  privateUnits?: Prisma.PrivateUnitCreateNestedManyWithoutPhysicalGroupInput
 }
 
 export type PhysicalGroupUncheckedCreateWithoutResidentialComplexInput = {
@@ -399,6 +428,7 @@ export type PhysicalGroupUncheckedCreateWithoutResidentialComplexInput = {
   type: $Enums.PhysicalGroupType
   createdAt?: Date | string
   updatedAt?: Date | string
+  privateUnits?: Prisma.PrivateUnitUncheckedCreateNestedManyWithoutPhysicalGroupInput
 }
 
 export type PhysicalGroupCreateOrConnectWithoutResidentialComplexInput = {
@@ -439,6 +469,58 @@ export type PhysicalGroupScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"PhysicalGroup"> | Date | string
 }
 
+export type PhysicalGroupCreateWithoutPrivateUnitsInput = {
+  id?: string
+  name: string
+  type: $Enums.PhysicalGroupType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  residentialComplex: Prisma.ResidentialComplexCreateNestedOneWithoutPhysicalGroupsInput
+}
+
+export type PhysicalGroupUncheckedCreateWithoutPrivateUnitsInput = {
+  id?: string
+  residentialComplexId: string
+  name: string
+  type: $Enums.PhysicalGroupType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PhysicalGroupCreateOrConnectWithoutPrivateUnitsInput = {
+  where: Prisma.PhysicalGroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.PhysicalGroupCreateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedCreateWithoutPrivateUnitsInput>
+}
+
+export type PhysicalGroupUpsertWithoutPrivateUnitsInput = {
+  update: Prisma.XOR<Prisma.PhysicalGroupUpdateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedUpdateWithoutPrivateUnitsInput>
+  create: Prisma.XOR<Prisma.PhysicalGroupCreateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedCreateWithoutPrivateUnitsInput>
+  where?: Prisma.PhysicalGroupWhereInput
+}
+
+export type PhysicalGroupUpdateToOneWithWhereWithoutPrivateUnitsInput = {
+  where?: Prisma.PhysicalGroupWhereInput
+  data: Prisma.XOR<Prisma.PhysicalGroupUpdateWithoutPrivateUnitsInput, Prisma.PhysicalGroupUncheckedUpdateWithoutPrivateUnitsInput>
+}
+
+export type PhysicalGroupUpdateWithoutPrivateUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPhysicalGroupTypeFieldUpdateOperationsInput | $Enums.PhysicalGroupType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  residentialComplex?: Prisma.ResidentialComplexUpdateOneRequiredWithoutPhysicalGroupsNestedInput
+}
+
+export type PhysicalGroupUncheckedUpdateWithoutPrivateUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  residentialComplexId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPhysicalGroupTypeFieldUpdateOperationsInput | $Enums.PhysicalGroupType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type PhysicalGroupCreateManyResidentialComplexInput = {
   id?: string
   name: string
@@ -453,6 +535,7 @@ export type PhysicalGroupUpdateWithoutResidentialComplexInput = {
   type?: Prisma.EnumPhysicalGroupTypeFieldUpdateOperationsInput | $Enums.PhysicalGroupType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privateUnits?: Prisma.PrivateUnitUpdateManyWithoutPhysicalGroupNestedInput
 }
 
 export type PhysicalGroupUncheckedUpdateWithoutResidentialComplexInput = {
@@ -461,6 +544,7 @@ export type PhysicalGroupUncheckedUpdateWithoutResidentialComplexInput = {
   type?: Prisma.EnumPhysicalGroupTypeFieldUpdateOperationsInput | $Enums.PhysicalGroupType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privateUnits?: Prisma.PrivateUnitUncheckedUpdateManyWithoutPhysicalGroupNestedInput
 }
 
 export type PhysicalGroupUncheckedUpdateManyWithoutResidentialComplexInput = {
@@ -472,6 +556,35 @@ export type PhysicalGroupUncheckedUpdateManyWithoutResidentialComplexInput = {
 }
 
 
+/**
+ * Count Type PhysicalGroupCountOutputType
+ */
+
+export type PhysicalGroupCountOutputType = {
+  privateUnits: number
+}
+
+export type PhysicalGroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  privateUnits?: boolean | PhysicalGroupCountOutputTypeCountPrivateUnitsArgs
+}
+
+/**
+ * PhysicalGroupCountOutputType without action
+ */
+export type PhysicalGroupCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PhysicalGroupCountOutputType
+   */
+  select?: Prisma.PhysicalGroupCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PhysicalGroupCountOutputType without action
+ */
+export type PhysicalGroupCountOutputTypeCountPrivateUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PrivateUnitWhereInput
+}
+
 
 export type PhysicalGroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -481,6 +594,8 @@ export type PhysicalGroupSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   updatedAt?: boolean
   residentialComplex?: boolean | Prisma.ResidentialComplexDefaultArgs<ExtArgs>
+  privateUnits?: boolean | Prisma.PhysicalGroup$privateUnitsArgs<ExtArgs>
+  _count?: boolean | Prisma.PhysicalGroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["physicalGroup"]>
 
 export type PhysicalGroupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -515,6 +630,8 @@ export type PhysicalGroupSelectScalar = {
 export type PhysicalGroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "residentialComplexId" | "name" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["physicalGroup"]>
 export type PhysicalGroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   residentialComplex?: boolean | Prisma.ResidentialComplexDefaultArgs<ExtArgs>
+  privateUnits?: boolean | Prisma.PhysicalGroup$privateUnitsArgs<ExtArgs>
+  _count?: boolean | Prisma.PhysicalGroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PhysicalGroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   residentialComplex?: boolean | Prisma.ResidentialComplexDefaultArgs<ExtArgs>
@@ -527,6 +644,7 @@ export type $PhysicalGroupPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "PhysicalGroup"
   objects: {
     residentialComplex: Prisma.$ResidentialComplexPayload<ExtArgs>
+    privateUnits: Prisma.$PrivateUnitPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -930,6 +1048,7 @@ readonly fields: PhysicalGroupFieldRefs;
 export interface Prisma__PhysicalGroupClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   residentialComplex<T extends Prisma.ResidentialComplexDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ResidentialComplexDefaultArgs<ExtArgs>>): Prisma.Prisma__ResidentialComplexClient<runtime.Types.Result.GetResult<Prisma.$ResidentialComplexPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  privateUnits<T extends Prisma.PhysicalGroup$privateUnitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PhysicalGroup$privateUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrivateUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1363,6 +1482,30 @@ export type PhysicalGroupDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many PhysicalGroups to delete.
    */
   limit?: number
+}
+
+/**
+ * PhysicalGroup.privateUnits
+ */
+export type PhysicalGroup$privateUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PrivateUnit
+   */
+  select?: Prisma.PrivateUnitSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PrivateUnit
+   */
+  omit?: Prisma.PrivateUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PrivateUnitInclude<ExtArgs> | null
+  where?: Prisma.PrivateUnitWhereInput
+  orderBy?: Prisma.PrivateUnitOrderByWithRelationInput | Prisma.PrivateUnitOrderByWithRelationInput[]
+  cursor?: Prisma.PrivateUnitWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PrivateUnitScalarFieldEnum | Prisma.PrivateUnitScalarFieldEnum[]
 }
 
 /**

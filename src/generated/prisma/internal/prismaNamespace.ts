@@ -398,7 +398,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   ResidentialComplex: 'ResidentialComplex',
-  PhysicalGroup: 'PhysicalGroup'
+  PhysicalGroup: 'PhysicalGroup',
+  PrivateUnit: 'PrivateUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "residentialComplex" | "physicalGroup"
+    modelProps: "residentialComplex" | "physicalGroup" | "privateUnit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -566,6 +567,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PrivateUnit: {
+      payload: Prisma.$PrivateUnitPayload<ExtArgs>
+      fields: Prisma.PrivateUnitFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrivateUnitFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrivateUnitFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        findFirst: {
+          args: Prisma.PrivateUnitFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrivateUnitFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        findMany: {
+          args: Prisma.PrivateUnitFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>[]
+        }
+        create: {
+          args: Prisma.PrivateUnitCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        createMany: {
+          args: Prisma.PrivateUnitCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PrivateUnitCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>[]
+        }
+        delete: {
+          args: Prisma.PrivateUnitDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        update: {
+          args: Prisma.PrivateUnitUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrivateUnitDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrivateUnitUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PrivateUnitUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>[]
+        }
+        upsert: {
+          args: Prisma.PrivateUnitUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivateUnitPayload>
+        }
+        aggregate: {
+          args: Prisma.PrivateUnitAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrivateUnit>
+        }
+        groupBy: {
+          args: Prisma.PrivateUnitGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrivateUnitGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrivateUnitCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrivateUnitCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -630,6 +705,20 @@ export const PhysicalGroupScalarFieldEnum = {
 export type PhysicalGroupScalarFieldEnum = (typeof PhysicalGroupScalarFieldEnum)[keyof typeof PhysicalGroupScalarFieldEnum]
 
 
+export const PrivateUnitScalarFieldEnum = {
+  id: 'id',
+  residentialComplexId: 'residentialComplexId',
+  physicalGroupId: 'physicalGroupId',
+  identifier: 'identifier',
+  type: 'type',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrivateUnitScalarFieldEnum = (typeof PrivateUnitScalarFieldEnum)[keyof typeof PrivateUnitScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -644,6 +733,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -705,6 +802,34 @@ export type EnumPhysicalGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'PhysicalGroupType[]'
  */
 export type ListEnumPhysicalGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PhysicalGroupType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivateUnitType'
+ */
+export type EnumPrivateUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivateUnitType'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivateUnitType[]'
+ */
+export type ListEnumPrivateUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivateUnitType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivateUnitStatus'
+ */
+export type EnumPrivateUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivateUnitStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivateUnitStatus[]'
+ */
+export type ListEnumPrivateUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivateUnitStatus[]'>
     
 
 
@@ -874,6 +999,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   residentialComplex?: Prisma.ResidentialComplexOmit
   physicalGroup?: Prisma.PhysicalGroupOmit
+  privateUnit?: Prisma.PrivateUnitOmit
 }
 
 /* Types for Logging */

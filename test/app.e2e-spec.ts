@@ -251,6 +251,209 @@ describe('Application (e2e)', () => {
       });
   });
 
+  it('/api/v1/private-units (POST) creates a private unit without a physical group', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: '101',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        residentialComplexId,
+        physicalGroupId: null,
+        identifier: '101',
+        type: 'APARTMENT',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+  });
+
+  it('/api/v1/private-units (POST) creates a private unit with a physical group', async () => {
+    const physicalGroupResponse = await request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId,
+        name: 'Torre E2E',
+        type: 'TOWER',
+      })
+      .expect(201);
+
+    const physicalGroupBody = physicalGroupResponse.body as Record<string, unknown>;
+
+    const physicalGroupId = physicalGroupBody.id;
+
+    expect(typeof physicalGroupId).toBe('string');
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        physicalGroupId,
+        identifier: '201',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        residentialComplexId,
+        physicalGroupId,
+        identifier: '201',
+        type: 'APARTMENT',
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/private-units (POST) rejects invalid type', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: '301',
+        type: 'INVALID',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/private-units',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/private-units (POST) rejects invalid residential complex id', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId: '123',
+        identifier: '401',
+        type: 'APARTMENT',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/private-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/private-units (POST) returns 404 when residential complex does not exist', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId: '00000000-0000-0000-0000-000000000000',
+        identifier: '501',
+        type: 'APARTMENT',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'RESIDENTIAL_COMPLEX_NOT_FOUND',
+            path: '/api/v1/private-units',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/private-units (POST) returns 404 when physical group does not exist', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        physicalGroupId: '00000000-0000-0000-0000-000000000000',
+        identifier: '601',
+        type: 'APARTMENT',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PHYSICAL_GROUP_NOT_FOUND',
+            path: '/api/v1/private-units',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/private-units (POST) rejects physical group from another residential complex', async () => {
+    const anotherComplex = await app.get(CreateResidentialComplexUseCase).execute({
+      name: 'Another E2E Complex',
+      address: 'Another E2E Address',
+      city: 'Cali',
+    });
+
+    const physicalGroupResponse = await request(app.getHttpServer())
+      .post('/api/v1/physical-groups')
+      .send({
+        residentialComplexId: anotherComplex.id,
+        name: 'Torre Otro Conjunto',
+        type: 'TOWER',
+      })
+      .expect(201);
+
+    const physicalGroupBody = physicalGroupResponse.body as Record<string, unknown>;
+
+    const physicalGroupId = physicalGroupBody.id;
+
+    expect(typeof physicalGroupId).toBe('string');
+
+    await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        physicalGroupId,
+        identifier: '701',
+        type: 'APARTMENT',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'PHYSICAL_GROUP_RESIDENTIAL_COMPLEX_MISMATCH',
+            path: '/api/v1/private-units',
+          }),
+        );
+      });
+  });
+
   it('/api/v1/auth/me (GET) rejects missing authentication', () => {
     return request(app.getHttpServer())
       .get('/api/v1/auth/me')

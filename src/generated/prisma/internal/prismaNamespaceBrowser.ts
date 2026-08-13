@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   ResidentialComplex: 'ResidentialComplex',
-  PhysicalGroup: 'PhysicalGroup'
+  PhysicalGroup: 'PhysicalGroup',
+  PrivateUnit: 'PrivateUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -96,6 +97,20 @@ export const PhysicalGroupScalarFieldEnum = {
 export type PhysicalGroupScalarFieldEnum = (typeof PhysicalGroupScalarFieldEnum)[keyof typeof PhysicalGroupScalarFieldEnum]
 
 
+export const PrivateUnitScalarFieldEnum = {
+  id: 'id',
+  residentialComplexId: 'residentialComplexId',
+  physicalGroupId: 'physicalGroupId',
+  identifier: 'identifier',
+  type: 'type',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrivateUnitScalarFieldEnum = (typeof PrivateUnitScalarFieldEnum)[keyof typeof PrivateUnitScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -110,4 +125,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

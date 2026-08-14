@@ -400,7 +400,9 @@ export const ModelName = {
   Plan: 'Plan',
   ResidentialComplex: 'ResidentialComplex',
   PhysicalGroup: 'PhysicalGroup',
-  PrivateUnit: 'PrivateUnit'
+  PrivateUnit: 'PrivateUnit',
+  Person: 'Person',
+  Subscription: 'Subscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -716,6 +718,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Person: {
+      payload: Prisma.$PersonPayload<ExtArgs>
+      fields: Prisma.PersonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PersonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PersonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        findFirst: {
+          args: Prisma.PersonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PersonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        findMany: {
+          args: Prisma.PersonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>[]
+        }
+        create: {
+          args: Prisma.PersonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        createMany: {
+          args: Prisma.PersonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PersonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>[]
+        }
+        delete: {
+          args: Prisma.PersonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        update: {
+          args: Prisma.PersonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        deleteMany: {
+          args: Prisma.PersonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PersonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PersonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>[]
+        }
+        upsert: {
+          args: Prisma.PersonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonPayload>
+        }
+        aggregate: {
+          args: Prisma.PersonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePerson>
+        }
+        groupBy: {
+          args: Prisma.PersonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PersonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonCountAggregateOutputType> | number
+        }
+      }
+    }
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>
+      fields: Prisma.SubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>
+        }
+        groupBy: {
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -763,6 +913,7 @@ export const PlanScalarFieldEnum = {
   maxUnits: 'maxUnits',
   monthlyPrice: 'monthlyPrice',
   yearlyPrice: 'yearlyPrice',
+  quarterlyPrice: 'quarterlyPrice',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -808,6 +959,38 @@ export const PrivateUnitScalarFieldEnum = {
 } as const
 
 export type PrivateUnitScalarFieldEnum = (typeof PrivateUnitScalarFieldEnum)[keyof typeof PrivateUnitScalarFieldEnum]
+
+
+export const PersonScalarFieldEnum = {
+  id: 'id',
+  identificationType: 'identificationType',
+  identificationNumber: 'identificationNumber',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  planId: 'planId',
+  billingCycle: 'billingCycle',
+  price: 'price',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  nextBillingDate: 'nextBillingDate',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -963,6 +1146,62 @@ export type EnumPrivateUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'PrivateUnitStatus[]'
  */
 export type ListEnumPrivateUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivateUnitStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'IdentificationType'
+ */
+export type EnumIdentificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IdentificationType'>
+    
+
+
+/**
+ * Reference to a field of type 'IdentificationType[]'
+ */
+export type ListEnumIdentificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IdentificationType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PersonStatus'
+ */
+export type EnumPersonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PersonStatus[]'
+ */
+export type ListEnumPersonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BillingCycle'
+ */
+export type EnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle'>
+    
+
+
+/**
+ * Reference to a field of type 'BillingCycle[]'
+ */
+export type ListEnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SubscriptionStatus'
+ */
+export type EnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SubscriptionStatus[]'
+ */
+export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>
     
 
 
@@ -1134,6 +1373,8 @@ export type GlobalOmitConfig = {
   residentialComplex?: Prisma.ResidentialComplexOmit
   physicalGroup?: Prisma.PhysicalGroupOmit
   privateUnit?: Prisma.PrivateUnitOmit
+  person?: Prisma.PersonOmit
+  subscription?: Prisma.SubscriptionOmit
 }
 
 /* Types for Logging */

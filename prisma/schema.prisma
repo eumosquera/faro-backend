@@ -14,6 +14,34 @@ enum PlanStatus {
   INACTIVE
 }
 
+enum IdentificationType {
+  CC
+  TI
+  CE
+  PA
+  NIT
+  PPT
+  PEP
+}
+
+enum PersonStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+  QUARTERLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  GRACE_PERIOD
+  EXPIRED
+  CANCELLED
+}
+
 enum ResidentialComplexStatus {
   ACTIVE
   INACTIVE
@@ -44,7 +72,10 @@ model Plan {
   maxUnits     Int
   monthlyPrice Decimal    @db.Decimal(10, 2)
   yearlyPrice  Decimal    @db.Decimal(10, 2)
+  quarterlyPrice Decimal  @db.Decimal(10, 2)
   status       PlanStatus @default(ACTIVE)
+
+  subscriptions Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,4 +129,46 @@ model PrivateUnit {
 
   @@index([residentialComplexId])
   @@index([physicalGroupId])
+}
+
+model Person {
+  id                   String             @id @default(uuid())
+  identificationType   IdentificationType
+  identificationNumber String
+  fullName             String
+  email                String?
+  phone                String?
+  status               PersonStatus       @default(ACTIVE)
+
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([identificationType, identificationNumber])
+  @@map("people")
+}
+
+model Subscription {
+  id String @id @default(uuid())
+
+  personId String
+  person   Person @relation(fields: [personId], references: [id])
+
+  planId String
+  plan   Plan   @relation(fields: [planId], references: [id])
+
+  billingCycle BillingCycle
+  price        Decimal      @db.Decimal(10, 2)
+
+  startDate       DateTime
+  endDate         DateTime?
+  nextBillingDate DateTime?
+  status          SubscriptionStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([personId, status])
+  @@map("subscriptions")
 }

@@ -17,6 +17,46 @@ export const PlanStatus = {
 export type PlanStatus = (typeof PlanStatus)[keyof typeof PlanStatus]
 
 
+export const IdentificationType = {
+  CC: 'CC',
+  TI: 'TI',
+  CE: 'CE',
+  PA: 'PA',
+  NIT: 'NIT',
+  PPT: 'PPT',
+  PEP: 'PEP'
+} as const
+
+export type IdentificationType = (typeof IdentificationType)[keyof typeof IdentificationType]
+
+
+export const PersonStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type PersonStatus = (typeof PersonStatus)[keyof typeof PersonStatus]
+
+
+export const BillingCycle = {
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY',
+  QUARTERLY: 'QUARTERLY'
+} as const
+
+export type BillingCycle = (typeof BillingCycle)[keyof typeof BillingCycle]
+
+
+export const SubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  GRACE_PERIOD: 'GRACE_PERIOD',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
 export const ResidentialComplexStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'

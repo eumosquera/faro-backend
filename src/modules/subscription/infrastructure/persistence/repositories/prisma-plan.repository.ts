@@ -27,6 +27,7 @@ export class PrismaPlanRepository implements PlanRepository {
       maxUnits: record.maxUnits,
       monthlyPrice: Number(record.monthlyPrice),
       yearlyPrice: Number(record.yearlyPrice),
+      quarterlyPrice: Number(record.quarterlyPrice),
       status: record.status,
     });
   }
@@ -50,6 +51,7 @@ export class PrismaPlanRepository implements PlanRepository {
       maxUnits: record.maxUnits,
       monthlyPrice: Number(record.monthlyPrice),
       yearlyPrice: Number(record.yearlyPrice),
+      quarterlyPrice: Number(record.quarterlyPrice),
       status: record.status,
     });
   }
@@ -67,6 +69,7 @@ export class PrismaPlanRepository implements PlanRepository {
         maxUnits: plan.maxUnits,
         monthlyPrice: plan.monthlyPrice,
         yearlyPrice: plan.yearlyPrice,
+        quarterlyPrice: plan.quarterlyPrice,
         status: plan.status,
       },
       update: {
@@ -76,6 +79,7 @@ export class PrismaPlanRepository implements PlanRepository {
         maxUnits: plan.maxUnits,
         monthlyPrice: plan.monthlyPrice,
         yearlyPrice: plan.yearlyPrice,
+        quarterlyPrice: plan.quarterlyPrice,
         status: plan.status,
       },
     });

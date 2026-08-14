@@ -37,3 +37,13 @@ export type PhysicalGroup = Prisma.PhysicalGroupModel
  * 
  */
 export type PrivateUnit = Prisma.PrivateUnitModel
+/**
+ * Model Person
+ * 
+ */
+export type Person = Prisma.PersonModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel

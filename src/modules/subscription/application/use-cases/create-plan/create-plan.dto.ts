@@ -5,4 +5,5 @@ export interface CreatePlanDto {
   maxUnits: number;
   monthlyPrice: number;
   yearlyPrice: number;
+  quarterlyPrice: number;
 }

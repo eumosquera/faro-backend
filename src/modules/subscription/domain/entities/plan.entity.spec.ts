@@ -10,6 +10,7 @@ describe('Plan', () => {
       maxUnits: 100,
       monthlyPrice: 50000,
       yearlyPrice: 500000,
+      quarterlyPrice: 125000,
       status: 'ACTIVE',
     });
 
@@ -20,6 +21,7 @@ describe('Plan', () => {
     expect(plan.maxUnits).toBe(100);
     expect(plan.monthlyPrice).toBe(50000);
     expect(plan.yearlyPrice).toBe(500000);
+    expect(plan.quarterlyPrice).toBe(125000);
     expect(plan.status).toBe('ACTIVE');
   });
 });

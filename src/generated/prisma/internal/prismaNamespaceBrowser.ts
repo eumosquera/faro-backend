@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Plan: 'Plan',
   ResidentialComplex: 'ResidentialComplex',
   PhysicalGroup: 'PhysicalGroup',
   PrivateUnit: 'PrivateUnit'
@@ -70,6 +71,22 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const PlanScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  maxComplexes: 'maxComplexes',
+  maxUnits: 'maxUnits',
+  monthlyPrice: 'monthlyPrice',
+  yearlyPrice: 'yearlyPrice',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
 
 
 export const ResidentialComplexScalarFieldEnum = {

@@ -8,6 +8,7 @@ export interface PlanProps {
   maxUnits: number;
   monthlyPrice: number;
   yearlyPrice: number;
+  quarterlyPrice: number;
   status: PlanStatus;
 }
 
@@ -44,6 +45,10 @@ export class Plan {
 
   get yearlyPrice(): number {
     return this.props.yearlyPrice;
+  }
+
+  get quarterlyPrice(): number {
+    return this.props.quarterlyPrice;
   }
 
   get status(): PlanStatus {

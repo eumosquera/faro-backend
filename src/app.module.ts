@@ -8,6 +8,8 @@ import { createLoggerModule } from './core/logging/logger.config';
 import { StructureModule } from './modules/structure/structure.module';
 import { SharedModule } from './shared/shared.module';
 import { SupabaseModule } from './core/auth/supabase.module';
+import { PeopleModule } from './modules/people/people.module';
+import { SubscriptionModule } from './modules/subscription/subscription.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { SupabaseModule } from './core/auth/supabase.module';
     StructureModule,
     SharedModule,
     SupabaseModule,
+    PeopleModule,
+    SubscriptionModule,
   ],
   controllers: [HealthController],
   providers: [],

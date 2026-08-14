@@ -54,7 +54,9 @@ export const ModelName = {
   Plan: 'Plan',
   ResidentialComplex: 'ResidentialComplex',
   PhysicalGroup: 'PhysicalGroup',
-  PrivateUnit: 'PrivateUnit'
+  PrivateUnit: 'PrivateUnit',
+  Person: 'Person',
+  Subscription: 'Subscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,6 +83,7 @@ export const PlanScalarFieldEnum = {
   maxUnits: 'maxUnits',
   monthlyPrice: 'monthlyPrice',
   yearlyPrice: 'yearlyPrice',
+  quarterlyPrice: 'quarterlyPrice',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -126,6 +129,38 @@ export const PrivateUnitScalarFieldEnum = {
 } as const
 
 export type PrivateUnitScalarFieldEnum = (typeof PrivateUnitScalarFieldEnum)[keyof typeof PrivateUnitScalarFieldEnum]
+
+
+export const PersonScalarFieldEnum = {
+  id: 'id',
+  identificationType: 'identificationType',
+  identificationNumber: 'identificationNumber',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  planId: 'planId',
+  billingCycle: 'billingCycle',
+  price: 'price',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  nextBillingDate: 'nextBillingDate',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {

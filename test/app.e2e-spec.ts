@@ -4,13 +4,34 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { createClient } from '@supabase/supabase-js';
 import request from 'supertest';
-import { afterEach } from '@jest/globals';
 import { AppModule } from './../src/app.module';
+import { PrismaService } from './../src/core/database/prisma.service';
 import { GlobalExceptionFilter } from './../src/core/errors/global-exception.filter';
 import { CreateResidentialComplexUseCase } from './../src/modules/structure/application/use-cases/create-residential-complex/create-residential-complex.use-case';
+import { CreatePlanUseCase } from './../src/modules/subscription/application/use-cases/create-plan/create-plan.use-case';
+
 describe('Application (e2e)', () => {
   let app: INestApplication;
   let residentialComplexId: string;
+
+  const testIdentificationNumbers = [
+    '123456789',
+    '987654321',
+    '456789123',
+    '111222333',
+    '555666777',
+  ];
+  const testResidentialComplexNames = ['E2E Residential Complex', 'Another E2E Complex'];
+
+  function getResponseId(response: { body: unknown }): string {
+    const body = response.body as Record<string, unknown>;
+
+    if (typeof body.id !== 'string') {
+      throw new Error('Expected a string id in the response body');
+    }
+
+    return body.id;
+  }
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -41,6 +62,70 @@ describe('Application (e2e)', () => {
 
     await app.init();
 
+    const prisma = app.get(PrismaService);
+
+    await prisma.$transaction([
+      prisma.subscription.deleteMany({
+        where: {
+          OR: [
+            {
+              person: {
+                identificationNumber: {
+                  in: testIdentificationNumbers,
+                },
+              },
+            },
+            {
+              plan: {
+                code: {
+                  startsWith: 'E2E-',
+                },
+              },
+            },
+          ],
+        },
+      }),
+      prisma.privateUnit.deleteMany({
+        where: {
+          residentialComplex: {
+            name: {
+              in: testResidentialComplexNames,
+            },
+          },
+        },
+      }),
+      prisma.physicalGroup.deleteMany({
+        where: {
+          residentialComplex: {
+            name: {
+              in: testResidentialComplexNames,
+            },
+          },
+        },
+      }),
+      prisma.residentialComplex.deleteMany({
+        where: {
+          name: {
+            in: testResidentialComplexNames,
+          },
+        },
+      }),
+      prisma.person.deleteMany({
+        where: {
+          identificationNumber: {
+            in: testIdentificationNumbers,
+          },
+        },
+      }),
+      prisma.plan.deleteMany({
+        where: {
+          code: {
+            startsWith: 'E2E-',
+          },
+        },
+      }),
+    ]);
+
     const createResidentialComplexUseCase = app.get(CreateResidentialComplexUseCase);
 
     const residentialComplex = await createResidentialComplexUseCase.execute({
@@ -53,7 +138,9 @@ describe('Application (e2e)', () => {
   });
 
   afterEach(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   it('/api/v1/unknown-route (GET)', () => {
@@ -451,6 +538,756 @@ describe('Application (e2e)', () => {
             path: '/api/v1/private-units',
           }),
         );
+      });
+  });
+
+  it('/api/v1/plans (POST) creates a plan', async () => {
+    const planCode = `E2E-STARTER-${Date.now()}`;
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: planCode,
+        name: 'Starter',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        code: planCode,
+        name: 'Starter',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+  });
+
+  it('/api/v1/plans (POST) rejects duplicate code', async () => {
+    const createPlanUseCase = app.get(CreatePlanUseCase);
+    const planCode = `E2E-DUPLICATE-${Date.now()}`;
+
+    await createPlanUseCase.execute({
+      code: planCode,
+      name: 'Existing Plan',
+      maxComplexes: 1,
+      maxUnits: 100,
+      monthlyPrice: 50000,
+      quarterlyPrice: 140000,
+      yearlyPrice: 500000,
+    });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: planCode,
+        name: 'Duplicate Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'PLAN_CODE_ALREADY_EXISTS',
+            path: '/api/v1/plans',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects maxComplexes equal to zero', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-COMPLEXES-${Date.now()}`,
+        name: 'Invalid Plan',
+        maxComplexes: 0,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects maxUnits equal to zero', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-UNITS-${Date.now()}`,
+        name: 'Invalid Plan',
+        maxComplexes: 1,
+        maxUnits: 0,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects negative monthlyPrice', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-MONTHLY-${Date.now()}`,
+        name: 'Invalid Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: -1,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects negative quarterlyPrice', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-QUARTERLY-${Date.now()}`,
+        name: 'Invalid Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: -1,
+        yearlyPrice: 500000,
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects negative yearlyPrice', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-YEARLY-${Date.now()}`,
+        name: 'Invalid Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: -1,
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/plans (POST) rejects unknown properties', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-UNKNOWN-${Date.now()}`,
+        name: 'Starter',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/plans',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/people (POST) creates a person with email and phone', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Carlos Pérez Gómez',
+        email: 'juan@example.com',
+        phone: '3001234567',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Carlos Pérez Gómez',
+        email: 'juan@example.com',
+        phone: '3001234567',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/people (POST) creates a person with email without phone', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CE',
+        identificationNumber: '987654321',
+        fullName: 'María Pérez',
+        email: 'maria@example.com',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        identificationType: 'CE',
+        identificationNumber: '987654321',
+        fullName: 'María Pérez',
+        email: 'maria@example.com',
+        phone: null,
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/people (POST) creates a person with phone without email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'TI',
+        identificationNumber: '456789123',
+        fullName: 'Pedro Gómez',
+        phone: '3009876543',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        identificationType: 'TI',
+        identificationNumber: '456789123',
+        fullName: 'Pedro Gómez',
+        email: null,
+        phone: '3009876543',
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/people (POST) rejects person without email and phone', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '111222333',
+        fullName: 'Persona Sin Contacto',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'PERSON_CONTACT_REQUIRED',
+            path: '/api/v1/people',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/people (POST) rejects duplicate identification', async () => {
+    const person = {
+      identificationType: 'CC',
+      identificationNumber: '555666777',
+      fullName: 'Persona Original',
+      email: 'original@example.com',
+    };
+
+    await request(app.getHttpServer()).post('/api/v1/people').send(person).expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        ...person,
+        fullName: 'Persona Duplicada',
+        email: 'duplicate@example.com',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'PERSON_ALREADY_EXISTS',
+            path: '/api/v1/people',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/subscriptions (POST) creates a monthly subscription', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Subscription Monthly Person',
+        email: 'subscription-monthly@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const planCode = `E2E-SUB-MONTHLY-${Date.now()}`;
+
+    const planResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: planCode,
+        name: 'Subscription Monthly Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const planId = getResponseId(planResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId,
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        planId,
+        billingCycle: 'MONTHLY',
+        price: 50000,
+        startDate: '2026-08-14T00:00:00.000Z',
+        endDate: null,
+        nextBillingDate: '2026-09-14T00:00:00.000Z',
+        status: 'ACTIVE',
+      }),
+    );
+
+    expect(typeof getResponseId(response)).toBe('string');
+  });
+
+  it('/api/v1/subscriptions (POST) creates a quarterly subscription', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '987654321',
+        fullName: 'Subscription Quarterly Person',
+        phone: '3001234567',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const planResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-QUARTERLY-${Date.now()}`,
+        name: 'Subscription Quarterly Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const planId = getResponseId(planResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId,
+        billingCycle: 'QUARTERLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        planId,
+        billingCycle: 'QUARTERLY',
+        price: 140000,
+        startDate: '2026-08-14T00:00:00.000Z',
+        endDate: null,
+        nextBillingDate: '2026-11-14T00:00:00.000Z',
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/subscriptions (POST) creates a yearly subscription', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'TI',
+        identificationNumber: '456789123',
+        fullName: 'Subscription Yearly Person',
+        email: 'subscription-yearly@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const planResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-YEARLY-${Date.now()}`,
+        name: 'Subscription Yearly Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const planId = getResponseId(planResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId,
+        billingCycle: 'YEARLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        planId,
+        billingCycle: 'YEARLY',
+        price: 500000,
+        startDate: '2026-08-14T00:00:00.000Z',
+        endDate: null,
+        nextBillingDate: '2027-08-14T00:00:00.000Z',
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/subscriptions (POST) returns 404 when person does not exist', async () => {
+    const planResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-NO-PERSON-${Date.now()}`,
+        name: 'Subscription Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const planId = getResponseId(planResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        planId,
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PERSON_NOT_FOUND',
+            path: '/api/v1/subscriptions',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/subscriptions (POST) returns 404 when plan does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '111222333',
+        fullName: 'Subscription No Plan Person',
+        email: 'subscription-no-plan@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId: '00000000-0000-0000-0000-000000000000',
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PLAN_NOT_FOUND',
+            path: '/api/v1/subscriptions',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/subscriptions (POST) returns 400 when plan is inactive', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '555666777',
+        fullName: 'Subscription Inactive Plan Person',
+        email: 'subscription-inactive@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const planResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-INACTIVE-${Date.now()}`,
+        name: 'Inactive Subscription Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const planId = getResponseId(planResponse);
+
+    const prisma = app.get(PrismaService);
+
+    await prisma.plan.update({
+      where: {
+        id: planId,
+      },
+      data: {
+        status: 'INACTIVE',
+      },
+    });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId,
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'PLAN_INACTIVE',
+            path: '/api/v1/subscriptions',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/subscriptions (POST) returns 409 when person already has an active subscription', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Subscription Duplicate Person',
+        email: 'subscription-duplicate@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const firstPlanResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-FIRST-${Date.now()}`,
+        name: 'First Subscription Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 50000,
+        quarterlyPrice: 140000,
+        yearlyPrice: 500000,
+      })
+      .expect(201);
+
+    const secondPlanResponse = await request(app.getHttpServer())
+      .post('/api/v1/plans')
+      .send({
+        code: `E2E-SUB-SECOND-${Date.now()}`,
+        name: 'Second Subscription Plan',
+        maxComplexes: 1,
+        maxUnits: 100,
+        monthlyPrice: 60000,
+        quarterlyPrice: 160000,
+        yearlyPrice: 600000,
+      })
+      .expect(201);
+
+    const firstPlanId = getResponseId(firstPlanResponse);
+    const secondPlanId = getResponseId(secondPlanResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId: firstPlanId,
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/subscriptions')
+      .send({
+        personId,
+        planId: secondPlanId,
+        billingCycle: 'MONTHLY',
+        startDate: '2026-08-14T00:00:00.000Z',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACTIVE_SUBSCRIPTION_ALREADY_EXISTS',
+            path: '/api/v1/subscriptions',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
       });
   });
 

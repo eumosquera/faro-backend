@@ -1,14 +1,18 @@
+import { Injectable } from '@nestjs/common';
+
+import { IdGenerator } from '../../../../../shared/identity/id-generator';
 import { Plan } from '../../../domain/entities/plan.entity';
-import type { PlanRepository } from '../../../domain/repositories/plan.repository';
+import { PlanRepository } from '../../../domain/repositories/plan.repository';
 import { PlanCodeAlreadyExistsError } from '../../errors/plan-code-already-exists.error';
 import type { CreatePlanDto } from './create-plan.dto';
-import type { IdGenerator } from '../../../../../shared/identity/id-generator';
 
 import { InvalidPlanComplexesError } from '../../errors/invalid-plan-complexes.error';
 import { InvalidPlanMonthlyPriceError } from '../../errors/invalid-plan-monthly-price.error';
 import { InvalidPlanUnitsError } from '../../errors/invalid-plan-units.error';
 import { InvalidPlanYearlyPriceError } from '../../errors/invalid-plan-yearly-price.error';
+import { InvalidPlanQuarterlyPriceError } from '../../errors/invalid-plan-quarterly-price.error';
 
+@Injectable()
 export class CreatePlanUseCase {
   constructor(
     private readonly planRepository: PlanRepository,
@@ -38,6 +42,10 @@ export class CreatePlanUseCase {
       throw new InvalidPlanYearlyPriceError();
     }
 
+    if (dto.quarterlyPrice < 0) {
+      throw new InvalidPlanQuarterlyPriceError();
+    }
+
     const plan = Plan.create({
       id: this.idGenerator.generate(),
       code: dto.code,
@@ -46,6 +54,7 @@ export class CreatePlanUseCase {
       maxUnits: dto.maxUnits,
       monthlyPrice: dto.monthlyPrice,
       yearlyPrice: dto.yearlyPrice,
+      quarterlyPrice: dto.quarterlyPrice,
       status: 'ACTIVE',
     });
 

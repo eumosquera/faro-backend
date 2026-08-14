@@ -43,6 +43,7 @@ describe('CreatePlanUseCase', () => {
       maxUnits: 100,
       monthlyPrice: 50000,
       yearlyPrice: 500000,
+      quarterlyPrice: 150000,
     });
 
     expect(result).toBeInstanceOf(Plan);
@@ -53,6 +54,7 @@ describe('CreatePlanUseCase', () => {
     expect(result.maxUnits).toBe(100);
     expect(result.monthlyPrice).toBe(50000);
     expect(result.yearlyPrice).toBe(500000);
+    expect(result.quarterlyPrice).toBe(150000);
     expect(result.status).toBe('ACTIVE');
 
     const generateSpy = jest.spyOn(idGenerator, 'generate');
@@ -68,6 +70,7 @@ describe('CreatePlanUseCase', () => {
       maxUnits: 100,
       monthlyPrice: 50000,
       yearlyPrice: 500000,
+      quarterlyPrice: 150000,
       status: 'ACTIVE',
     });
 
@@ -81,6 +84,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: 100,
         monthlyPrice: 50000,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(PlanCodeAlreadyExistsError);
 
@@ -99,6 +103,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: 100,
         monthlyPrice: 50000,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanComplexesError);
 
@@ -116,6 +121,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: 100,
         monthlyPrice: 50000,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanComplexesError);
 
@@ -134,6 +140,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: 0,
         monthlyPrice: 50000,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanUnitsError);
 
@@ -152,6 +159,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: -1,
         monthlyPrice: 50000,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanUnitsError);
 
@@ -170,6 +178,7 @@ describe('CreatePlanUseCase', () => {
         maxUnits: 100,
         monthlyPrice: -1,
         yearlyPrice: 500000,
+        quarterlyPrice: 150000,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanMonthlyPriceError);
 
@@ -187,6 +196,7 @@ describe('CreatePlanUseCase', () => {
         maxComplexes: 1,
         maxUnits: 100,
         monthlyPrice: 50000,
+        quarterlyPrice: 150000,
         yearlyPrice: -1,
       }),
     ).rejects.toBeInstanceOf(InvalidPlanYearlyPriceError);

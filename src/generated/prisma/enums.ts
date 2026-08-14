@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const PlanStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type PlanStatus = (typeof PlanStatus)[keyof typeof PlanStatus]
+
+
 export const ResidentialComplexStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'

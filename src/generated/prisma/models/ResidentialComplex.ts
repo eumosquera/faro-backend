@@ -368,16 +368,8 @@ export type ResidentialComplexScalarRelationFilter = {
   isNot?: Prisma.ResidentialComplexWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type EnumResidentialComplexStatusFieldUpdateOperationsInput = {
   set?: $Enums.ResidentialComplexStatus
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
 }
 
 export type ResidentialComplexCreateNestedOneWithoutPhysicalGroupsInput = {

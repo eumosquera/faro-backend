@@ -9,6 +9,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PlanStatus {
+  ACTIVE
+  INACTIVE
+}
+
 enum ResidentialComplexStatus {
   ACTIVE
   INACTIVE
@@ -29,6 +34,22 @@ enum PrivateUnitType {
 enum PrivateUnitStatus {
   ACTIVE
   INACTIVE
+}
+
+model Plan {
+  id           String     @id @default(uuid())
+  code         String     @unique
+  name         String
+  maxComplexes Int
+  maxUnits     Int
+  monthlyPrice Decimal    @db.Decimal(10, 2)
+  yearlyPrice  Decimal    @db.Decimal(10, 2)
+  status       PlanStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("plans")
 }
 
 model ResidentialComplex {

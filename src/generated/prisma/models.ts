@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Plan'
 export type * from './models/ResidentialComplex'
 export type * from './models/PhysicalGroup'
 export type * from './models/PrivateUnit'

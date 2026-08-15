@@ -39,6 +39,11 @@ import { PrivateUnitController } from './presentation/controllers/private-unit.c
     },
     CreatePrivateUnitUseCase,
   ],
-  exports: [CreateResidentialComplexUseCase, CreatePhysicalGroupUseCase, CreatePrivateUnitUseCase],
+  exports: [
+    CreateResidentialComplexUseCase,
+    CreatePhysicalGroupUseCase,
+    CreatePrivateUnitUseCase,
+    PrivateUnitRepository,
+  ],
 })
 export class StructureModule {}

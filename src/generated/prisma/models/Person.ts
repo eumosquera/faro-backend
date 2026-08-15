@@ -215,6 +215,7 @@ export type PersonWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  personUnits?: Prisma.PersonUnitListRelationFilter
 }
 
 export type PersonOrderByWithRelationInput = {
@@ -228,6 +229,7 @@ export type PersonOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  personUnits?: Prisma.PersonUnitOrderByRelationAggregateInput
 }
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +247,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  personUnits?: Prisma.PersonUnitListRelationFilter
 }, "id" | "identificationType_identificationNumber">
 
 export type PersonOrderByWithAggregationInput = {
@@ -288,6 +291,7 @@ export type PersonCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutPersonInput
+  personUnits?: Prisma.PersonUnitCreateNestedManyWithoutPersonInput
 }
 
 export type PersonUncheckedCreateInput = {
@@ -301,6 +305,7 @@ export type PersonUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutPersonInput
+  personUnits?: Prisma.PersonUnitUncheckedCreateNestedManyWithoutPersonInput
 }
 
 export type PersonUpdateInput = {
@@ -314,6 +319,7 @@ export type PersonUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutPersonNestedInput
+  personUnits?: Prisma.PersonUnitUpdateManyWithoutPersonNestedInput
 }
 
 export type PersonUncheckedUpdateInput = {
@@ -327,6 +333,7 @@ export type PersonUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutPersonNestedInput
+  personUnits?: Prisma.PersonUnitUncheckedUpdateManyWithoutPersonNestedInput
 }
 
 export type PersonCreateManyInput = {
@@ -433,6 +440,20 @@ export type PersonUpdateOneRequiredWithoutSubscriptionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.PersonUpdateWithoutSubscriptionsInput>, Prisma.PersonUncheckedUpdateWithoutSubscriptionsInput>
 }
 
+export type PersonCreateNestedOneWithoutPersonUnitsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutPersonUnitsInput, Prisma.PersonUncheckedCreateWithoutPersonUnitsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPersonUnitsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutPersonUnitsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutPersonUnitsInput, Prisma.PersonUncheckedCreateWithoutPersonUnitsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPersonUnitsInput
+  upsert?: Prisma.PersonUpsertWithoutPersonUnitsInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutPersonUnitsInput, Prisma.PersonUpdateWithoutPersonUnitsInput>, Prisma.PersonUncheckedUpdateWithoutPersonUnitsInput>
+}
+
 export type PersonCreateWithoutSubscriptionsInput = {
   id?: string
   identificationType: $Enums.IdentificationType
@@ -443,6 +464,7 @@ export type PersonCreateWithoutSubscriptionsInput = {
   status?: $Enums.PersonStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  personUnits?: Prisma.PersonUnitCreateNestedManyWithoutPersonInput
 }
 
 export type PersonUncheckedCreateWithoutSubscriptionsInput = {
@@ -455,6 +477,7 @@ export type PersonUncheckedCreateWithoutSubscriptionsInput = {
   status?: $Enums.PersonStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  personUnits?: Prisma.PersonUnitUncheckedCreateNestedManyWithoutPersonInput
 }
 
 export type PersonCreateOrConnectWithoutSubscriptionsInput = {
@@ -483,6 +506,7 @@ export type PersonUpdateWithoutSubscriptionsInput = {
   status?: Prisma.EnumPersonStatusFieldUpdateOperationsInput | $Enums.PersonStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  personUnits?: Prisma.PersonUnitUpdateManyWithoutPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutSubscriptionsInput = {
@@ -495,6 +519,75 @@ export type PersonUncheckedUpdateWithoutSubscriptionsInput = {
   status?: Prisma.EnumPersonStatusFieldUpdateOperationsInput | $Enums.PersonStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  personUnits?: Prisma.PersonUnitUncheckedUpdateManyWithoutPersonNestedInput
+}
+
+export type PersonCreateWithoutPersonUnitsInput = {
+  id?: string
+  identificationType: $Enums.IdentificationType
+  identificationNumber: string
+  fullName: string
+  email?: string | null
+  phone?: string | null
+  status?: $Enums.PersonStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutPersonInput
+}
+
+export type PersonUncheckedCreateWithoutPersonUnitsInput = {
+  id?: string
+  identificationType: $Enums.IdentificationType
+  identificationNumber: string
+  fullName: string
+  email?: string | null
+  phone?: string | null
+  status?: $Enums.PersonStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutPersonInput
+}
+
+export type PersonCreateOrConnectWithoutPersonUnitsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutPersonUnitsInput, Prisma.PersonUncheckedCreateWithoutPersonUnitsInput>
+}
+
+export type PersonUpsertWithoutPersonUnitsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutPersonUnitsInput, Prisma.PersonUncheckedUpdateWithoutPersonUnitsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutPersonUnitsInput, Prisma.PersonUncheckedCreateWithoutPersonUnitsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutPersonUnitsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutPersonUnitsInput, Prisma.PersonUncheckedUpdateWithoutPersonUnitsInput>
+}
+
+export type PersonUpdateWithoutPersonUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  identificationType?: Prisma.EnumIdentificationTypeFieldUpdateOperationsInput | $Enums.IdentificationType
+  identificationNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPersonStatusFieldUpdateOperationsInput | $Enums.PersonStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutPersonNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutPersonUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  identificationType?: Prisma.EnumIdentificationTypeFieldUpdateOperationsInput | $Enums.IdentificationType
+  identificationNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPersonStatusFieldUpdateOperationsInput | $Enums.PersonStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutPersonNestedInput
 }
 
 
@@ -504,10 +597,12 @@ export type PersonUncheckedUpdateWithoutSubscriptionsInput = {
 
 export type PersonCountOutputType = {
   subscriptions: number
+  personUnits: number
 }
 
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subscriptions?: boolean | PersonCountOutputTypeCountSubscriptionsArgs
+  personUnits?: boolean | PersonCountOutputTypeCountPersonUnitsArgs
 }
 
 /**
@@ -527,6 +622,13 @@ export type PersonCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.
   where?: Prisma.SubscriptionWhereInput
 }
 
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountPersonUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PersonUnitWhereInput
+}
+
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -539,6 +641,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   subscriptions?: boolean | Prisma.Person$subscriptionsArgs<ExtArgs>
+  personUnits?: boolean | Prisma.Person$personUnitsArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["person"]>
 
@@ -581,6 +684,7 @@ export type PersonSelectScalar = {
 export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identificationType" | "identificationNumber" | "fullName" | "email" | "phone" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
 export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subscriptions?: boolean | Prisma.Person$subscriptionsArgs<ExtArgs>
+  personUnits?: boolean | Prisma.Person$personUnitsArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -590,6 +694,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Person"
   objects: {
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    personUnits: Prisma.$PersonUnitPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -996,6 +1101,7 @@ readonly fields: PersonFieldRefs;
 export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   subscriptions<T extends Prisma.Person$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  personUnits<T extends Prisma.Person$personUnitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$personUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1448,6 +1554,30 @@ export type Person$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Person.personUnits
+ */
+export type Person$personUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PersonUnit
+   */
+  select?: Prisma.PersonUnitSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PersonUnit
+   */
+  omit?: Prisma.PersonUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonUnitInclude<ExtArgs> | null
+  where?: Prisma.PersonUnitWhereInput
+  orderBy?: Prisma.PersonUnitOrderByWithRelationInput | Prisma.PersonUnitOrderByWithRelationInput[]
+  cursor?: Prisma.PersonUnitWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PersonUnitScalarFieldEnum | Prisma.PersonUnitScalarFieldEnum[]
 }
 
 /**

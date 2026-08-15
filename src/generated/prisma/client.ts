@@ -65,6 +65,11 @@ export type PrivateUnit = Prisma.PrivateUnitModel
  */
 export type Person = Prisma.PersonModel
 /**
+ * Model RolePersona
+ * 
+ */
+export type RolePersona = Prisma.RolePersonaModel
+/**
  * Model Subscription
  * 
  */

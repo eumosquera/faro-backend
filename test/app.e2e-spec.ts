@@ -117,6 +117,13 @@ describe('Application (e2e)', () => {
           },
         },
       }),
+      prisma.rolePersona.deleteMany({
+        where: {
+          code: {
+            startsWith: 'E2E-ROLE-',
+          },
+        },
+      }),
       prisma.plan.deleteMany({
         where: {
           code: {
@@ -908,6 +915,197 @@ describe('Application (e2e)', () => {
 
         expect(typeof body.message).toBe('string');
         expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) creates a role persona', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/role-personas (POST) rejects duplicate code', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-DUPLICATE-CODE',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-DUPLICATE-CODE',
+        name: 'Otro nombre',
+        description: 'Otra descripción.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ROLE_PERSONA_CODE_ALREADY_EXISTS',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) rejects duplicate name', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-FIRST-NAME',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-SECOND-NAME',
+        name: 'Propietario',
+        description: 'Otra descripción.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ROLE_PERSONA_NAME_ALREADY_EXISTS',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) rejects empty code', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: '',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) rejects empty name', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-EMPTY-NAME',
+        name: '',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) rejects empty description', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-EMPTY-DESCRIPTION',
+        name: 'Residente',
+        description: '',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/role-personas (POST) rejects unknown properties', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-UNKNOWN',
+        name: 'Arrendatario',
+        description: 'Persona que ocupa una unidad privada mediante arrendamiento.',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/role-personas',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
       });
   });
 

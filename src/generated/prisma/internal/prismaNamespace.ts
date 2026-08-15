@@ -402,6 +402,7 @@ export const ModelName = {
   PhysicalGroup: 'PhysicalGroup',
   PrivateUnit: 'PrivateUnit',
   Person: 'Person',
+  RolePersona: 'RolePersona',
   Subscription: 'Subscription'
 } as const
 
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "subscription"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -792,6 +793,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RolePersona: {
+      payload: Prisma.$RolePersonaPayload<ExtArgs>
+      fields: Prisma.RolePersonaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RolePersonaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RolePersonaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        findFirst: {
+          args: Prisma.RolePersonaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RolePersonaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        findMany: {
+          args: Prisma.RolePersonaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>[]
+        }
+        create: {
+          args: Prisma.RolePersonaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        createMany: {
+          args: Prisma.RolePersonaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RolePersonaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>[]
+        }
+        delete: {
+          args: Prisma.RolePersonaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        update: {
+          args: Prisma.RolePersonaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        deleteMany: {
+          args: Prisma.RolePersonaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RolePersonaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RolePersonaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>[]
+        }
+        upsert: {
+          args: Prisma.RolePersonaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RolePersonaPayload>
+        }
+        aggregate: {
+          args: Prisma.RolePersonaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRolePersona>
+        }
+        groupBy: {
+          args: Prisma.RolePersonaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RolePersonaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RolePersonaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RolePersonaCountAggregateOutputType> | number
+        }
+      }
+    }
     Subscription: {
       payload: Prisma.$SubscriptionPayload<ExtArgs>
       fields: Prisma.SubscriptionFieldRefs
@@ -974,6 +1049,19 @@ export const PersonScalarFieldEnum = {
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
+
+
+export const RolePersonaScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RolePersonaScalarFieldEnum = (typeof RolePersonaScalarFieldEnum)[keyof typeof RolePersonaScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {
@@ -1178,6 +1266,20 @@ export type ListEnumPersonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'RolePersonaStatus'
+ */
+export type EnumRolePersonaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RolePersonaStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RolePersonaStatus[]'
+ */
+export type ListEnumRolePersonaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RolePersonaStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'BillingCycle'
  */
 export type EnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle'>
@@ -1374,6 +1476,7 @@ export type GlobalOmitConfig = {
   physicalGroup?: Prisma.PhysicalGroupOmit
   privateUnit?: Prisma.PrivateUnitOmit
   person?: Prisma.PersonOmit
+  rolePersona?: Prisma.RolePersonaOmit
   subscription?: Prisma.SubscriptionOmit
 }
 

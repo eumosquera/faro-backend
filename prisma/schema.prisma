@@ -29,6 +29,11 @@ enum PersonStatus {
   INACTIVE
 }
 
+enum RolePersonaStatus {
+  ACTIVE
+  INACTIVE
+}
+
 enum BillingCycle {
   MONTHLY
   YEARLY
@@ -147,6 +152,19 @@ model Person {
 
   @@unique([identificationType, identificationNumber])
   @@map("people")
+}
+
+model RolePersona {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  name        String            @unique
+  description String
+  status      RolePersonaStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("role_personas")
 }
 
 model Subscription {

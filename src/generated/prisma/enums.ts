@@ -38,6 +38,14 @@ export const PersonStatus = {
 export type PersonStatus = (typeof PersonStatus)[keyof typeof PersonStatus]
 
 
+export const RolePersonaStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type RolePersonaStatus = (typeof RolePersonaStatus)[keyof typeof RolePersonaStatus]
+
+
 export const BillingCycle = {
   MONTHLY: 'MONTHLY',
   YEARLY: 'YEARLY',

@@ -97,3 +97,11 @@ export const PrivateUnitStatus = {
 } as const
 
 export type PrivateUnitStatus = (typeof PrivateUnitStatus)[keyof typeof PrivateUnitStatus]
+
+
+export const PersonUnitStatus = {
+  ACTIVE: 'ACTIVE',
+  FINISHED: 'FINISHED'
+} as const
+
+export type PersonUnitStatus = (typeof PersonUnitStatus)[keyof typeof PersonUnitStatus]

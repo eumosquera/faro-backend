@@ -403,7 +403,8 @@ export const ModelName = {
   PrivateUnit: 'PrivateUnit',
   Person: 'Person',
   RolePersona: 'RolePersona',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  PersonUnit: 'PersonUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -941,6 +942,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PersonUnit: {
+      payload: Prisma.$PersonUnitPayload<ExtArgs>
+      fields: Prisma.PersonUnitFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PersonUnitFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PersonUnitFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        findFirst: {
+          args: Prisma.PersonUnitFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PersonUnitFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        findMany: {
+          args: Prisma.PersonUnitFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>[]
+        }
+        create: {
+          args: Prisma.PersonUnitCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        createMany: {
+          args: Prisma.PersonUnitCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PersonUnitCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>[]
+        }
+        delete: {
+          args: Prisma.PersonUnitDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        update: {
+          args: Prisma.PersonUnitUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        deleteMany: {
+          args: Prisma.PersonUnitDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PersonUnitUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PersonUnitUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>[]
+        }
+        upsert: {
+          args: Prisma.PersonUnitUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonUnitPayload>
+        }
+        aggregate: {
+          args: Prisma.PersonUnitAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePersonUnit>
+        }
+        groupBy: {
+          args: Prisma.PersonUnitGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonUnitGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PersonUnitCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonUnitCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1079,6 +1154,20 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PersonUnitScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  privateUnitId: 'privateUnitId',
+  rolePersonaId: 'rolePersonaId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  observations: 'observations'
+} as const
+
+export type PersonUnitScalarFieldEnum = (typeof PersonUnitScalarFieldEnum)[keyof typeof PersonUnitScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1308,6 +1397,20 @@ export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'PersonUnitStatus'
+ */
+export type EnumPersonUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonUnitStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PersonUnitStatus[]'
+ */
+export type ListEnumPersonUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PersonUnitStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1478,6 +1581,7 @@ export type GlobalOmitConfig = {
   person?: Prisma.PersonOmit
   rolePersona?: Prisma.RolePersonaOmit
   subscription?: Prisma.SubscriptionOmit
+  personUnit?: Prisma.PersonUnitOmit
 }
 
 /* Types for Logging */

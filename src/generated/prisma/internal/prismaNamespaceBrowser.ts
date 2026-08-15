@@ -57,7 +57,8 @@ export const ModelName = {
   PrivateUnit: 'PrivateUnit',
   Person: 'Person',
   RolePersona: 'RolePersona',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  PersonUnit: 'PersonUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -175,6 +176,20 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PersonUnitScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  privateUnitId: 'privateUnitId',
+  rolePersonaId: 'rolePersonaId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  observations: 'observations'
+} as const
+
+export type PersonUnitScalarFieldEnum = (typeof PersonUnitScalarFieldEnum)[keyof typeof PersonUnitScalarFieldEnum]
 
 
 export const SortOrder = {

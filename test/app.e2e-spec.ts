@@ -85,6 +85,33 @@ describe('Application (e2e)', () => {
           ],
         },
       }),
+      prisma.personUnit.deleteMany({
+        where: {
+          OR: [
+            {
+              person: {
+                identificationNumber: {
+                  in: testIdentificationNumbers,
+                },
+              },
+            },
+            {
+              privateUnit: {
+                identifier: {
+                  startsWith: 'E2E-',
+                },
+              },
+            },
+            {
+              rolePersona: {
+                code: {
+                  startsWith: 'E2E-ROLE-',
+                },
+              },
+            },
+          ],
+        },
+      }),
       prisma.privateUnit.deleteMany({
         where: {
           residentialComplex: {
@@ -1107,6 +1134,488 @@ describe('Application (e2e)', () => {
 
         expect(typeof body.message).toBe('string');
       });
+  });
+
+  it('/api/v1/person-units (POST) creates a person-unit relationship', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-401',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        startDate: '2024-01-15',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        status: 'ACTIVE',
+        endDate: null,
+        observations: null,
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.startDate).toBe('string');
+  });
+
+  it('/api/v1/person-units (POST) allows multiple active roles for the same person and unit', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-402',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const ownerRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    const ownerRoleId = getResponseId(ownerRoleResponse);
+
+    const residentRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-RESIDENTE',
+        name: 'Residente',
+        description: 'Persona que reside en una unidad privada.',
+      })
+      .expect(201);
+
+    const residentRoleId = getResponseId(residentRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId: ownerRoleId,
+        startDate: '2024-01-01',
+      })
+      .expect(201);
+
+    const secondResponse = await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId: residentRoleId,
+        startDate: '2025-01-01',
+      })
+      .expect(201);
+
+    expect(secondResponse.body).toEqual(
+      expect.objectContaining({
+        personId,
+        privateUnitId,
+        rolePersonaId: residentRoleId,
+        status: 'ACTIVE',
+      }),
+    );
+  });
+
+  it('/api/v1/person-units (POST) returns 404 when person does not exist', async () => {
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-403',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        privateUnitId,
+        rolePersonaId,
+        startDate: '2024-01-01',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PERSON_NOT_FOUND',
+            path: '/api/v1/person-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/person-units (POST) returns 404 when private unit does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-PROPIETARIO',
+        name: 'Propietario',
+        description: 'Persona titular de una unidad privada.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId: '00000000-0000-0000-0000-000000000000',
+        rolePersonaId,
+        startDate: '2024-01-01',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PRIVATE_UNIT_NOT_FOUND',
+            path: '/api/v1/person-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/person-units (POST) returns 404 when role persona does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-404',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId: '00000000-0000-0000-0000-000000000000',
+        startDate: '2024-01-01',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'ROLE_PERSONA_NOT_FOUND',
+            path: '/api/v1/person-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/person-units (POST) returns 409 when role persona is inactive', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-405',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-INACTIVE',
+        name: 'Rol Inactivo',
+        description: 'Rol utilizado para prueba E2E.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    const prisma = app.get(PrismaService);
+
+    await prisma.rolePersona.update({
+      where: {
+        id: rolePersonaId,
+      },
+      data: {
+        status: 'INACTIVE',
+      },
+    });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        startDate: '2024-01-01',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ROLE_PERSONA_INACTIVE',
+            path: '/api/v1/person-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/person-units (POST) rejects endDate before startDate', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Juan Pérez',
+        email: 'juan.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-406',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-ARRENDATARIO',
+        name: 'Arrendatario',
+        description: 'Persona que ocupa una unidad mediante arrendamiento.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        startDate: '2025-01-01',
+        endDate: '2024-12-31',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'INVALID_PERSON_UNIT_DATE_RANGE',
+            path: '/api/v1/person-units',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/person-units (POST) creates a finished-dated relationship with observations', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '123456789',
+        fullName: 'Carlos Ruiz',
+        email: 'carlos.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const privateUnitResponse = await request(app.getHttpServer())
+      .post('/api/v1/private-units')
+      .send({
+        residentialComplexId,
+        identifier: 'E2E-UNIT-407',
+        type: 'APARTMENT',
+      })
+      .expect(201);
+
+    const privateUnitId = getResponseId(privateUnitResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/role-personas')
+      .send({
+        code: 'E2E-ROLE-ARRENDATARIO',
+        name: 'Arrendatario',
+        description: 'Persona que ocupa una unidad mediante arrendamiento.',
+      })
+      .expect(201);
+
+    const rolePersonaId = getResponseId(roleResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        startDate: '2022-01-01',
+        endDate: '2024-12-31',
+        observations: 'Contrato de arrendamiento finalizado.',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        privateUnitId,
+        rolePersonaId,
+        status: 'ACTIVE',
+        observations: 'Contrato de arrendamiento finalizado.',
+      }),
+    );
+  });
+
+  it('/api/v1/person-units (POST) rejects unknown properties', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/person-units')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        privateUnitId: '00000000-0000-0000-0000-000000000001',
+        rolePersonaId: '00000000-0000-0000-0000-000000000002',
+        startDate: '2024-01-01',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400);
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(body).toEqual(
+      expect.objectContaining({
+        statusCode: 400,
+        code: 'BAD_REQUEST',
+        path: '/api/v1/person-units',
+      }),
+    );
   });
 
   it('/api/v1/subscriptions (POST) creates a monthly subscription', async () => {

@@ -69,16 +69,21 @@ enum PrivateUnitStatus {
   INACTIVE
 }
 
+enum PersonUnitStatus {
+  ACTIVE
+  FINISHED
+}
+
 model Plan {
-  id           String     @id @default(uuid())
-  code         String     @unique
-  name         String
-  maxComplexes Int
-  maxUnits     Int
-  monthlyPrice Decimal    @db.Decimal(10, 2)
-  yearlyPrice  Decimal    @db.Decimal(10, 2)
-  quarterlyPrice Decimal  @db.Decimal(10, 2)
-  status       PlanStatus @default(ACTIVE)
+  id             String     @id @default(uuid())
+  code           String     @unique
+  name           String
+  maxComplexes   Int
+  maxUnits       Int
+  monthlyPrice   Decimal    @db.Decimal(10, 2)
+  yearlyPrice    Decimal    @db.Decimal(10, 2)
+  quarterlyPrice Decimal    @db.Decimal(10, 2)
+  status         PlanStatus @default(ACTIVE)
 
   subscriptions Subscription[]
 
@@ -132,6 +137,8 @@ model PrivateUnit {
 
   physicalGroup PhysicalGroup? @relation(fields: [physicalGroupId], references: [id], onDelete: SetNull)
 
+  personUnits PersonUnit[]
+
   @@index([residentialComplexId])
   @@index([physicalGroupId])
 }
@@ -146,6 +153,7 @@ model Person {
   status               PersonStatus       @default(ACTIVE)
 
   subscriptions Subscription[]
+  personUnits   PersonUnit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -160,6 +168,8 @@ model RolePersona {
   name        String            @unique
   description String
   status      RolePersonaStatus @default(ACTIVE)
+
+  personUnits PersonUnit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -189,4 +199,29 @@ model Subscription {
 
   @@index([personId, status])
   @@map("subscriptions")
+}
+
+model PersonUnit {
+  id String @id @default(uuid())
+
+  personId String
+  person   Person @relation(fields: [personId], references: [id])
+
+  privateUnitId String
+  privateUnit   PrivateUnit @relation(fields: [privateUnitId], references: [id])
+
+  rolePersonaId String
+  rolePersona   RolePersona @relation(fields: [rolePersonaId], references: [id])
+
+  startDate DateTime
+  endDate   DateTime?
+
+  status PersonUnitStatus @default(ACTIVE)
+
+  observations String?
+
+  @@index([personId])
+  @@index([privateUnitId])
+  @@index([rolePersonaId])
+  @@map("person_units")
 }

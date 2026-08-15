@@ -56,6 +56,7 @@ export const ModelName = {
   PhysicalGroup: 'PhysicalGroup',
   PrivateUnit: 'PrivateUnit',
   Person: 'Person',
+  RolePersona: 'RolePersona',
   Subscription: 'Subscription'
 } as const
 
@@ -144,6 +145,19 @@ export const PersonScalarFieldEnum = {
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
+
+
+export const RolePersonaScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RolePersonaScalarFieldEnum = (typeof RolePersonaScalarFieldEnum)[keyof typeof RolePersonaScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

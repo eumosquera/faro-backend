@@ -79,6 +79,11 @@ enum AccessRoleStatus {
   INACTIVE
 }
 
+enum PermissionStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Plan {
   id             String     @id @default(uuid())
   code           String     @unique
@@ -242,4 +247,17 @@ model AccessRole {
   updatedAt DateTime @updatedAt
 
   @@map("access_roles")
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  code        String           @unique
+  name        String           @unique
+  description String
+  status      PermissionStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("permissions")
 }

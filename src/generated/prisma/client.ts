@@ -84,3 +84,8 @@ export type PersonUnit = Prisma.PersonUnitModel
  * 
  */
 export type AccessRole = Prisma.AccessRoleModel
+/**
+ * Model Permission
+ * 
+ */
+export type Permission = Prisma.PermissionModel

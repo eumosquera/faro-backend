@@ -79,3 +79,8 @@ export type Subscription = Prisma.SubscriptionModel
  * 
  */
 export type PersonUnit = Prisma.PersonUnitModel
+/**
+ * Model AccessRole
+ * 
+ */
+export type AccessRole = Prisma.AccessRoleModel

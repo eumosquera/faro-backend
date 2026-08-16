@@ -158,6 +158,13 @@ describe('Application (e2e)', () => {
           },
         },
       }),
+      prisma.accessRole.deleteMany({
+        where: {
+          code: {
+            startsWith: 'E2E-',
+          },
+        },
+      }),
     ]);
 
     const createResidentialComplexUseCase = app.get(CreateResidentialComplexUseCase);
@@ -1133,6 +1140,149 @@ describe('Application (e2e)', () => {
         );
 
         expect(typeof body.message).toBe('string');
+      });
+  });
+
+  it('/api/v1/access-roles (POST) creates an access role', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-PORTERO',
+        name: 'Portero',
+        description: 'Rol de acceso para usuarios responsables de la operación de portería.',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        code: 'E2E-PORTERO',
+        name: 'Portero',
+        description: 'Rol de acceso para usuarios responsables de la operación de portería.',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/access-roles (POST) rejects duplicate code', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-DUPLICATE-CODE',
+        name: 'Portero',
+        description: 'Primer rol.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-DUPLICATE-CODE',
+        name: 'Otro Portero',
+        description: 'Segundo rol.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACCESS_ROLE_CODE_ALREADY_EXISTS',
+            path: '/api/v1/access-roles',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles (POST) rejects duplicate name', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-DUPLICATE-NAME-1',
+        name: 'E2E Portero',
+        description: 'Primer rol.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-DUPLICATE-NAME-2',
+        name: 'E2E Portero',
+        description: 'Segundo rol.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACCESS_ROLE_NAME_ALREADY_EXISTS',
+            path: '/api/v1/access-roles',
+          }),
+        );
+      });
+  });
+  it('/api/v1/access-roles (POST) rejects empty code', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: '',
+        name: 'Portero',
+        description: 'Rol de acceso.',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/access-roles (POST) rejects empty name', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-PORTERO',
+        name: '',
+        description: 'Rol de acceso.',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/access-roles (POST) rejects empty description', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-PORTERO',
+        name: 'Portero',
+        description: '',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/access-roles (POST) rejects unknown properties', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-PORTERO',
+        name: 'Portero',
+        description: 'Rol de acceso.',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/access-roles',
+          }),
+        );
       });
   });
 

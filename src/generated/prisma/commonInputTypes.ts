@@ -376,6 +376,23 @@ export type EnumPersonUnitStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPersonUnitStatusFilter<$PrismaModel>
 }
 
+export type EnumAccessRoleStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessRoleStatus | Prisma.EnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel> | $Enums.AccessRoleStatus
+}
+
+export type EnumAccessRoleStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessRoleStatus | Prisma.EnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessRoleStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessRoleStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -749,6 +766,23 @@ export type NestedEnumPersonUnitStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPersonUnitStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPersonUnitStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumAccessRoleStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessRoleStatus | Prisma.EnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel> | $Enums.AccessRoleStatus
+}
+
+export type NestedEnumAccessRoleStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessRoleStatus | Prisma.EnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessRoleStatus[] | Prisma.ListEnumAccessRoleStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessRoleStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessRoleStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAccessRoleStatusFilter<$PrismaModel>
 }
 
 

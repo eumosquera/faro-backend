@@ -10,6 +10,7 @@ import { SharedModule } from './shared/shared.module';
 import { SupabaseModule } from './core/auth/supabase.module';
 import { PeopleModule } from './modules/people/people.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
+import { AccessModule } from './modules/access/access.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
     SupabaseModule,
     PeopleModule,
     SubscriptionModule,
+    AccessModule,
   ],
   controllers: [HealthController],
   providers: [],

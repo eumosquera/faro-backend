@@ -58,7 +58,8 @@ export const ModelName = {
   Person: 'Person',
   RolePersona: 'RolePersona',
   Subscription: 'Subscription',
-  PersonUnit: 'PersonUnit'
+  PersonUnit: 'PersonUnit',
+  AccessRole: 'AccessRole'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -190,6 +191,19 @@ export const PersonUnitScalarFieldEnum = {
 } as const
 
 export type PersonUnitScalarFieldEnum = (typeof PersonUnitScalarFieldEnum)[keyof typeof PersonUnitScalarFieldEnum]
+
+
+export const AccessRoleScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccessRoleScalarFieldEnum = (typeof AccessRoleScalarFieldEnum)[keyof typeof AccessRoleScalarFieldEnum]
 
 
 export const SortOrder = {

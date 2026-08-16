@@ -406,7 +406,8 @@ export const ModelName = {
   Subscription: 'Subscription',
   PersonUnit: 'PersonUnit',
   AccessRole: 'AccessRole',
-  Permission: 'Permission'
+  Permission: 'Permission',
+  AccessRolePermission: 'AccessRolePermission'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit" | "accessRole" | "permission"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit" | "accessRole" | "permission" | "accessRolePermission"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1166,6 +1167,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AccessRolePermission: {
+      payload: Prisma.$AccessRolePermissionPayload<ExtArgs>
+      fields: Prisma.AccessRolePermissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessRolePermissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessRolePermissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        findFirst: {
+          args: Prisma.AccessRolePermissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessRolePermissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        findMany: {
+          args: Prisma.AccessRolePermissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>[]
+        }
+        create: {
+          args: Prisma.AccessRolePermissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        createMany: {
+          args: Prisma.AccessRolePermissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessRolePermissionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>[]
+        }
+        delete: {
+          args: Prisma.AccessRolePermissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        update: {
+          args: Prisma.AccessRolePermissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessRolePermissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessRolePermissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessRolePermissionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessRolePermissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePermissionPayload>
+        }
+        aggregate: {
+          args: Prisma.AccessRolePermissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessRolePermission>
+        }
+        groupBy: {
+          args: Prisma.AccessRolePermissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessRolePermissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessRolePermissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessRolePermissionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1344,6 +1419,16 @@ export const PermissionScalarFieldEnum = {
 } as const
 
 export type PermissionScalarFieldEnum = (typeof PermissionScalarFieldEnum)[keyof typeof PermissionScalarFieldEnum]
+
+
+export const AccessRolePermissionScalarFieldEnum = {
+  id: 'id',
+  accessRoleId: 'accessRoleId',
+  permissionId: 'permissionId',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessRolePermissionScalarFieldEnum = (typeof AccessRolePermissionScalarFieldEnum)[keyof typeof AccessRolePermissionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1788,6 +1873,7 @@ export type GlobalOmitConfig = {
   personUnit?: Prisma.PersonUnitOmit
   accessRole?: Prisma.AccessRoleOmit
   permission?: Prisma.PermissionOmit
+  accessRolePermission?: Prisma.AccessRolePermissionOmit
 }
 
 /* Types for Logging */

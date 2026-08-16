@@ -158,6 +158,26 @@ describe('Application (e2e)', () => {
           },
         },
       }),
+      prisma.accessRolePermission.deleteMany({
+        where: {
+          OR: [
+            {
+              accessRole: {
+                code: {
+                  startsWith: 'E2E-',
+                },
+              },
+            },
+            {
+              permission: {
+                code: {
+                  startsWith: 'E2E-',
+                },
+              },
+            },
+          ],
+        },
+      }),
       prisma.accessRole.deleteMany({
         where: {
           code: {
@@ -1434,6 +1454,227 @@ describe('Application (e2e)', () => {
             statusCode: 400,
             code: 'BAD_REQUEST',
             path: '/api/v1/permissions',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions (POST) assigns a permission', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-PORTER',
+        name: 'E2E Portero',
+        description: 'Rol de acceso para portería.',
+      })
+      .expect(201);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-VIEW-ACCESS-LOGS',
+        name: 'E2E Ver registros de acceso',
+        description: 'Permite consultar registros de acceso.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+    const permissionId = getResponseId(permissionResponse);
+
+    const response = await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        accessRoleId,
+        permissionId,
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions (POST) rejects duplicate permission assignment', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-DUPLICATE-ROLE',
+        name: 'E2E Duplicate Role',
+        description: 'Rol para prueba de duplicidad.',
+      })
+      .expect(201);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-DUPLICATE-PERMISSION',
+        name: 'E2E Duplicate Permission',
+        description: 'Permiso para prueba de duplicidad.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({ permissionId })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({ permissionId })
+      .expect(409)
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACCESS_ROLE_PERMISSION_ALREADY_EXISTS',
+            path: `/api/v1/access-roles/${accessRoleId}/permissions`,
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions (POST) returns 404 when access role does not exist', async () => {
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-MISSING-ROLE-PERMISSION',
+        name: 'E2E Missing Role Permission',
+        description: 'Permiso de prueba.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+    await request(app.getHttpServer())
+      .post('/api/v1/access-roles/00000000-0000-0000-0000-000000000000/permissions')
+      .send({ permissionId })
+      .expect(404)
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'ACCESS_ROLE_NOT_FOUND',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions (POST) returns 404 when permission does not exist', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MISSING-PERMISSION-ROLE',
+        name: 'E2E Missing Permission Role',
+        description: 'Rol de prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId: '00000000-0000-0000-0000-000000000000',
+      })
+      .expect(404)
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PERMISSION_NOT_FOUND',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions/:permissionId (DELETE) removes a permission assignment', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-REMOVE-ROLE',
+        name: 'E2E Remove Role',
+        description: 'Rol para prueba de revocación.',
+      })
+      .expect(201);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-REMOVE-PERMISSION',
+        name: 'E2E Remove Permission',
+        description: 'Permiso para prueba de revocación.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({ permissionId })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/access-roles/${accessRoleId}/permissions/${permissionId}`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .delete(`/api/v1/access-roles/${accessRoleId}/permissions/${permissionId}`)
+      .expect(404)
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'ACCESS_ROLE_PERMISSION_NOT_FOUND',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-roles/:accessRoleId/permissions (POST) rejects unknown properties', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-UNKNOWN-PROPERTY-ROLE',
+        name: 'E2E Unknown Property Role',
+        description: 'Rol de prueba.',
+      })
+      .expect(201);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-UNKNOWN-PROPERTY-PERMISSION',
+        name: 'E2E Unknown Property Permission',
+        description: 'Permiso de prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: `/api/v1/access-roles/${accessRoleId}/permissions`,
           }),
         );
       });

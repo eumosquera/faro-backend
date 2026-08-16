@@ -105,3 +105,11 @@ export const PersonUnitStatus = {
 } as const
 
 export type PersonUnitStatus = (typeof PersonUnitStatus)[keyof typeof PersonUnitStatus]
+
+
+export const AccessRoleStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type AccessRoleStatus = (typeof AccessRoleStatus)[keyof typeof AccessRoleStatus]

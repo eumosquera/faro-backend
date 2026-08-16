@@ -404,7 +404,8 @@ export const ModelName = {
   Person: 'Person',
   RolePersona: 'RolePersona',
   Subscription: 'Subscription',
-  PersonUnit: 'PersonUnit'
+  PersonUnit: 'PersonUnit',
+  AccessRole: 'AccessRole'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit" | "accessRole"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1017,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AccessRole: {
+      payload: Prisma.$AccessRolePayload<ExtArgs>
+      fields: Prisma.AccessRoleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessRoleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessRoleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        findFirst: {
+          args: Prisma.AccessRoleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessRoleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        findMany: {
+          args: Prisma.AccessRoleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>[]
+        }
+        create: {
+          args: Prisma.AccessRoleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        createMany: {
+          args: Prisma.AccessRoleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessRoleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>[]
+        }
+        delete: {
+          args: Prisma.AccessRoleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        update: {
+          args: Prisma.AccessRoleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessRoleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessRoleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessRoleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessRoleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessRolePayload>
+        }
+        aggregate: {
+          args: Prisma.AccessRoleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessRole>
+        }
+        groupBy: {
+          args: Prisma.AccessRoleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessRoleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessRoleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessRoleCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1168,6 +1243,19 @@ export const PersonUnitScalarFieldEnum = {
 } as const
 
 export type PersonUnitScalarFieldEnum = (typeof PersonUnitScalarFieldEnum)[keyof typeof PersonUnitScalarFieldEnum]
+
+
+export const AccessRoleScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccessRoleScalarFieldEnum = (typeof AccessRoleScalarFieldEnum)[keyof typeof AccessRoleScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1411,6 +1499,20 @@ export type ListEnumPersonUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'AccessRoleStatus'
+ */
+export type EnumAccessRoleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRoleStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AccessRoleStatus[]'
+ */
+export type ListEnumAccessRoleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRoleStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1582,6 +1684,7 @@ export type GlobalOmitConfig = {
   rolePersona?: Prisma.RolePersonaOmit
   subscription?: Prisma.SubscriptionOmit
   personUnit?: Prisma.PersonUnitOmit
+  accessRole?: Prisma.AccessRoleOmit
 }
 
 /* Types for Logging */

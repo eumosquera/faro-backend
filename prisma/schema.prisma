@@ -74,6 +74,11 @@ enum PersonUnitStatus {
   FINISHED
 }
 
+enum AccessRoleStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Plan {
   id             String     @id @default(uuid())
   code           String     @unique
@@ -224,4 +229,17 @@ model PersonUnit {
   @@index([privateUnitId])
   @@index([rolePersonaId])
   @@map("person_units")
+}
+
+model AccessRole {
+  id          String           @id @default(uuid())
+  code        String           @unique
+  name        String           @unique
+  description String
+  status      AccessRoleStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("access_roles")
 }

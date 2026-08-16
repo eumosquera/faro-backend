@@ -165,6 +165,13 @@ describe('Application (e2e)', () => {
           },
         },
       }),
+      prisma.permission.deleteMany({
+        where: {
+          code: {
+            startsWith: 'E2E-',
+          },
+        },
+      }),
     ]);
 
     const createResidentialComplexUseCase = app.get(CreateResidentialComplexUseCase);
@@ -1281,6 +1288,152 @@ describe('Application (e2e)', () => {
             statusCode: 400,
             code: 'BAD_REQUEST',
             path: '/api/v1/access-roles',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/permissions (POST) creates a permission', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-VIEW-ACCESS-LOGS',
+        name: 'E2E Ver registros de acceso',
+        description:
+          'Permite consultar los registros históricos de entrada y salida de la copropiedad.',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        code: 'E2E-VIEW-ACCESS-LOGS',
+        name: 'E2E Ver registros de acceso',
+        description:
+          'Permite consultar los registros históricos de entrada y salida de la copropiedad.',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/permissions (POST) rejects duplicate code', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-DUPLICATE-PERMISSION-CODE',
+        name: 'E2E Permission One',
+        description: 'Primer permiso.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-DUPLICATE-PERMISSION-CODE',
+        name: 'E2E Permission Two',
+        description: 'Segundo permiso.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'PERMISSION_CODE_ALREADY_EXISTS',
+            path: '/api/v1/permissions',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/permissions (POST) rejects duplicate name', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-DUPLICATE-PERMISSION-NAME-1',
+        name: 'E2E Permission Duplicate Name',
+        description: 'Primer permiso.',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-DUPLICATE-PERMISSION-NAME-2',
+        name: 'E2E Permission Duplicate Name',
+        description: 'Segundo permiso.',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'PERMISSION_NAME_ALREADY_EXISTS',
+            path: '/api/v1/permissions',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/permissions (POST) rejects empty code', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: '',
+        name: 'E2E Permission',
+        description: 'Permiso de prueba.',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/permissions (POST) rejects empty name', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-PERMISSION',
+        name: '',
+        description: 'Permiso de prueba.',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/permissions (POST) rejects empty description', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-PERMISSION',
+        name: 'E2E Permission',
+        description: '',
+      })
+      .expect(400);
+  });
+
+  it('/api/v1/permissions (POST) rejects unknown properties', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'E2E-PERMISSION',
+        name: 'E2E Permission',
+        description: 'Permiso de prueba.',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/permissions',
           }),
         );
       });

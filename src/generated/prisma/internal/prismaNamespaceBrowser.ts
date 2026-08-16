@@ -60,7 +60,8 @@ export const ModelName = {
   Subscription: 'Subscription',
   PersonUnit: 'PersonUnit',
   AccessRole: 'AccessRole',
-  Permission: 'Permission'
+  Permission: 'Permission',
+  AccessRolePermission: 'AccessRolePermission'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -218,6 +219,16 @@ export const PermissionScalarFieldEnum = {
 } as const
 
 export type PermissionScalarFieldEnum = (typeof PermissionScalarFieldEnum)[keyof typeof PermissionScalarFieldEnum]
+
+
+export const AccessRolePermissionScalarFieldEnum = {
+  id: 'id',
+  accessRoleId: 'accessRoleId',
+  permissionId: 'permissionId',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessRolePermissionScalarFieldEnum = (typeof AccessRolePermissionScalarFieldEnum)[keyof typeof AccessRolePermissionScalarFieldEnum]
 
 
 export const SortOrder = {

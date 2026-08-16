@@ -243,6 +243,8 @@ model AccessRole {
   description String
   status      AccessRoleStatus @default(ACTIVE)
 
+  accessRolePermissions AccessRolePermission[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -256,8 +258,24 @@ model Permission {
   description String
   status      PermissionStatus @default(ACTIVE)
 
+  accessRolePermissions AccessRolePermission[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("permissions")
+}
+
+model AccessRolePermission {
+  id           String @id @default(uuid())
+  accessRoleId String
+  permissionId String
+
+  accessRole AccessRole @relation(fields: [accessRoleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([accessRoleId, permissionId])
+  @@map("access_role_permissions")
 }

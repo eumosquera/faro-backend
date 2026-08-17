@@ -410,6 +410,23 @@ export type EnumPermissionStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPermissionStatusFilter<$PrismaModel>
 }
 
+export type EnumAccessAccountStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessAccountStatus | Prisma.EnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel> | $Enums.AccessAccountStatus
+}
+
+export type EnumAccessAccountStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessAccountStatus | Prisma.EnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessAccountStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessAccountStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -817,6 +834,23 @@ export type NestedEnumPermissionStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPermissionStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPermissionStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumAccessAccountStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessAccountStatus | Prisma.EnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel> | $Enums.AccessAccountStatus
+}
+
+export type NestedEnumAccessAccountStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AccessAccountStatus | Prisma.EnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AccessAccountStatus[] | Prisma.ListEnumAccessAccountStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAccessAccountStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessAccountStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAccessAccountStatusFilter<$PrismaModel>
 }
 
 

@@ -84,6 +84,11 @@ enum PermissionStatus {
   INACTIVE
 }
 
+enum AccessAccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Plan {
   id             String     @id @default(uuid())
   code           String     @unique
@@ -164,6 +169,7 @@ model Person {
 
   subscriptions Subscription[]
   personUnits   PersonUnit[]
+  accessAccount AccessAccount?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -278,4 +284,18 @@ model AccessRolePermission {
 
   @@unique([accessRoleId, permissionId])
   @@map("access_role_permissions")
+}
+
+model AccessAccount {
+  id             String              @id @default(uuid())
+  personId       String              @unique
+  externalAuthId String              @unique
+  status         AccessAccountStatus @default(ACTIVE)
+
+  person Person @relation(fields: [personId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("access_accounts")
 }

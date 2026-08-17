@@ -121,3 +121,11 @@ export const PermissionStatus = {
 } as const
 
 export type PermissionStatus = (typeof PermissionStatus)[keyof typeof PermissionStatus]
+
+
+export const AccessAccountStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type AccessAccountStatus = (typeof AccessAccountStatus)[keyof typeof AccessAccountStatus]

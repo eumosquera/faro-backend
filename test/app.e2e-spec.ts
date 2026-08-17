@@ -137,13 +137,6 @@ describe('Application (e2e)', () => {
           },
         },
       }),
-      prisma.person.deleteMany({
-        where: {
-          identificationNumber: {
-            in: testIdentificationNumbers,
-          },
-        },
-      }),
       prisma.rolePersona.deleteMany({
         where: {
           code: {
@@ -189,6 +182,20 @@ describe('Application (e2e)', () => {
         where: {
           code: {
             startsWith: 'E2E-',
+          },
+        },
+      }),
+      prisma.accessAccount.deleteMany({
+        where: {
+          externalAuthId: {
+            startsWith: 'E2E-',
+          },
+        },
+      }),
+      prisma.person.deleteMany({
+        where: {
+          identificationNumber: {
+            in: testIdentificationNumbers,
           },
         },
       }),
@@ -1678,6 +1685,319 @@ describe('Application (e2e)', () => {
           }),
         );
       });
+  });
+
+  it('/api/v1/access-accounts (POST) creates an access account', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: 'E2E-ACCESS-PERSISTENCE-001',
+        fullName: 'Juan Pérez',
+        email: 'E2E-ACCESS-PERSISTENCE-001@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-USER-001',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-USER-001',
+        status: 'ACTIVE',
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/access-accounts (POST) returns 404 when person does not exist', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        externalAuthId: 'E2E-SUPABASE-MISSING-PERSON',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PERSON_NOT_FOUND',
+            path: '/api/v1/access-accounts',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/access-accounts (POST) rejects person with existing access account', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '987654321',
+        fullName: 'María Pérez',
+        email: 'maria.access.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-USER-002',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-USER-003',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACCESS_ACCOUNT_ALREADY_EXISTS_FOR_PERSON',
+            path: '/api/v1/access-accounts',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/access-accounts (POST) rejects duplicate external auth identity', async () => {
+    const firstPersonResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '456789123',
+        fullName: 'Carlos Primera Persona',
+        email: 'carlos.first.e2e@example.com',
+      })
+      .expect(201);
+
+    const secondPersonResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '111222333',
+        fullName: 'Carlos Segunda Persona',
+        email: 'carlos.second.e2e@example.com',
+      })
+      .expect(201);
+
+    const firstPersonId = getResponseId(firstPersonResponse);
+    const secondPersonId = getResponseId(secondPersonResponse);
+
+    const externalAuthId = 'E2E-SUPABASE-DUPLICATE-001';
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId: firstPersonId,
+        externalAuthId,
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId: secondPersonId,
+        externalAuthId,
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'EXTERNAL_AUTH_IDENTITY_ALREADY_LINKED',
+            path: '/api/v1/access-accounts',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/access-accounts (POST) rejects unknown properties', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'TI',
+        identificationNumber: '555666777',
+        fullName: 'Persona Access Account',
+        email: 'access-account-unknown.e2e@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-UNKNOWN-001',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/access-accounts',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/access-accounts (POST) persists the person relationship', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CE',
+        identificationNumber: 'E2E-ACCESS-PERSISTENCE-002',
+        fullName: 'Persona Persistencia',
+        email: 'E2E-ACCESS-PERSISTENCE-002@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-SUPABASE-PERSISTENCE-001',
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(response);
+
+    const prisma = app.get(PrismaService);
+
+    const accessAccount = await prisma.accessAccount.findUnique({
+      where: {
+        id: accessAccountId,
+      },
+    });
+
+    expect(accessAccount).not.toBeNull();
+    expect(accessAccount?.personId).toBe(personId);
+    expect(accessAccount?.externalAuthId).toBe('E2E-SUPABASE-PERSISTENCE-001');
+  });
+
+  it('/api/v1/access-accounts/:id/deactivate (PATCH) deactivates an access account', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: 'E2E-ACCESS-DEACTIVATE-001',
+        fullName: 'E2E Access Deactivate',
+        email: 'E2E-ACCESS-DEACTIVATE-001@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-ACCESS-DEACTIVATE-001',
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accountResponse);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/access-accounts/${accessAccountId}/deactivate`)
+      .expect(200);
+
+    const prisma = app.get(PrismaService);
+
+    const accessAccount = await prisma.accessAccount.findUnique({
+      where: {
+        id: accessAccountId,
+      },
+    });
+
+    expect(accessAccount).not.toBeNull();
+    expect(accessAccount?.status).toBe('INACTIVE');
+  });
+
+  it('/api/v1/access-accounts/:id/activate (PATCH) activates an access account', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: 'E2E-ACCESS-ACTIVATE-001',
+        fullName: 'E2E Access Activate',
+        email: 'E2E-ACCESS-ACTIVATE-001@example.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-ACCESS-ACTIVATE-001',
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accountResponse);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/access-accounts/${accessAccountId}/deactivate`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/access-accounts/${accessAccountId}/activate`)
+      .expect(200);
+
+    const prisma = app.get(PrismaService);
+
+    const accessAccount = await prisma.accessAccount.findUnique({
+      where: {
+        id: accessAccountId,
+      },
+    });
+
+    expect(accessAccount).not.toBeNull();
+    expect(accessAccount?.status).toBe('ACTIVE');
   });
 
   it('/api/v1/person-units (POST) creates a person-unit relationship', async () => {

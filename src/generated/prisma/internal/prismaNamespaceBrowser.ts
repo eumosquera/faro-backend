@@ -61,7 +61,8 @@ export const ModelName = {
   PersonUnit: 'PersonUnit',
   AccessRole: 'AccessRole',
   Permission: 'Permission',
-  AccessRolePermission: 'AccessRolePermission'
+  AccessRolePermission: 'AccessRolePermission',
+  AccessAccount: 'AccessAccount'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -229,6 +230,18 @@ export const AccessRolePermissionScalarFieldEnum = {
 } as const
 
 export type AccessRolePermissionScalarFieldEnum = (typeof AccessRolePermissionScalarFieldEnum)[keyof typeof AccessRolePermissionScalarFieldEnum]
+
+
+export const AccessAccountScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  externalAuthId: 'externalAuthId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccessAccountScalarFieldEnum = (typeof AccessAccountScalarFieldEnum)[keyof typeof AccessAccountScalarFieldEnum]
 
 
 export const SortOrder = {

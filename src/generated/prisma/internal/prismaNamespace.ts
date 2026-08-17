@@ -407,7 +407,8 @@ export const ModelName = {
   PersonUnit: 'PersonUnit',
   AccessRole: 'AccessRole',
   Permission: 'Permission',
-  AccessRolePermission: 'AccessRolePermission'
+  AccessRolePermission: 'AccessRolePermission',
+  AccessAccount: 'AccessAccount'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit" | "accessRole" | "permission" | "accessRolePermission"
+    modelProps: "plan" | "residentialComplex" | "physicalGroup" | "privateUnit" | "person" | "rolePersona" | "subscription" | "personUnit" | "accessRole" | "permission" | "accessRolePermission" | "accessAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1241,6 +1242,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AccessAccount: {
+      payload: Prisma.$AccessAccountPayload<ExtArgs>
+      fields: Prisma.AccessAccountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessAccountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessAccountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        findFirst: {
+          args: Prisma.AccessAccountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessAccountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        findMany: {
+          args: Prisma.AccessAccountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>[]
+        }
+        create: {
+          args: Prisma.AccessAccountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        createMany: {
+          args: Prisma.AccessAccountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessAccountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>[]
+        }
+        delete: {
+          args: Prisma.AccessAccountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        update: {
+          args: Prisma.AccessAccountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessAccountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessAccountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessAccountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessAccountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessAccountPayload>
+        }
+        aggregate: {
+          args: Prisma.AccessAccountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessAccount>
+        }
+        groupBy: {
+          args: Prisma.AccessAccountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessAccountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessAccountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessAccountCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1429,6 +1504,18 @@ export const AccessRolePermissionScalarFieldEnum = {
 } as const
 
 export type AccessRolePermissionScalarFieldEnum = (typeof AccessRolePermissionScalarFieldEnum)[keyof typeof AccessRolePermissionScalarFieldEnum]
+
+
+export const AccessAccountScalarFieldEnum = {
+  id: 'id',
+  personId: 'personId',
+  externalAuthId: 'externalAuthId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccessAccountScalarFieldEnum = (typeof AccessAccountScalarFieldEnum)[keyof typeof AccessAccountScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1700,6 +1787,20 @@ export type ListEnumPermissionStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'AccessAccountStatus'
+ */
+export type EnumAccessAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessAccountStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AccessAccountStatus[]'
+ */
+export type ListEnumAccessAccountStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessAccountStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1874,6 +1975,7 @@ export type GlobalOmitConfig = {
   accessRole?: Prisma.AccessRoleOmit
   permission?: Prisma.PermissionOmit
   accessRolePermission?: Prisma.AccessRolePermissionOmit
+  accessAccount?: Prisma.AccessAccountOmit
 }
 
 /* Types for Logging */

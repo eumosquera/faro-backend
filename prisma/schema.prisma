@@ -89,6 +89,11 @@ enum AccessAccountStatus {
   INACTIVE
 }
 
+enum MembershipStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model Plan {
   id             String     @id @default(uuid())
   code           String     @unique
@@ -120,6 +125,7 @@ model ResidentialComplex {
 
   physicalGroups PhysicalGroup[]
   privateUnits   PrivateUnit[]
+  memberships    Membership[]
 }
 
 model PhysicalGroup {
@@ -170,6 +176,7 @@ model Person {
   subscriptions Subscription[]
   personUnits   PersonUnit[]
   accessAccount AccessAccount?
+  memberships   Membership[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -250,6 +257,7 @@ model AccessRole {
   status      AccessRoleStatus @default(ACTIVE)
 
   accessRolePermissions AccessRolePermission[]
+  memberships           Membership[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -292,10 +300,35 @@ model AccessAccount {
   externalAuthId String              @unique
   status         AccessAccountStatus @default(ACTIVE)
 
-  person Person @relation(fields: [personId], references: [id])
+  person      Person       @relation(fields: [personId], references: [id])
+  memberships Membership[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("access_accounts")
+}
+
+model Membership {
+  id                   String           @id @default(uuid())
+  personId             String
+  accessAccountId      String?
+  residentialComplexId String
+  accessRoleId         String
+  status               MembershipStatus @default(ACTIVE)
+  startDate            DateTime
+  endDate              DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  person             Person             @relation(fields: [personId], references: [id])
+  accessAccount      AccessAccount?     @relation(fields: [accessAccountId], references: [id])
+  residentialComplex ResidentialComplex @relation(fields: [residentialComplexId], references: [id])
+  accessRole         AccessRole         @relation(fields: [accessRoleId], references: [id])
+
+  @@index([personId])
+  @@index([accessAccountId])
+  @@index([residentialComplexId])
+  @@index([accessRoleId])
+  @@index([status])
 }

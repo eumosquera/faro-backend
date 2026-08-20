@@ -129,3 +129,11 @@ export const AccessAccountStatus = {
 } as const
 
 export type AccessAccountStatus = (typeof AccessAccountStatus)[keyof typeof AccessAccountStatus]
+
+
+export const MembershipStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type MembershipStatus = (typeof MembershipStatus)[keyof typeof MembershipStatus]

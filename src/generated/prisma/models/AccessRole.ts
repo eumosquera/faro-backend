@@ -199,6 +199,7 @@ export type AccessRoleWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
 }
 
 export type AccessRoleOrderByWithRelationInput = {
@@ -210,6 +211,7 @@ export type AccessRoleOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   accessRolePermissions?: Prisma.AccessRolePermissionOrderByRelationAggregateInput
+  memberships?: Prisma.MembershipOrderByRelationAggregateInput
 }
 
 export type AccessRoleWhereUniqueInput = Prisma.AtLeast<{
@@ -224,6 +226,7 @@ export type AccessRoleWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AccessRole"> | Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
 }, "id" | "code" | "name">
 
 export type AccessRoleOrderByWithAggregationInput = {
@@ -261,6 +264,7 @@ export type AccessRoleCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionCreateNestedManyWithoutAccessRoleInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutAccessRoleInput
 }
 
 export type AccessRoleUncheckedCreateInput = {
@@ -272,6 +276,7 @@ export type AccessRoleUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionUncheckedCreateNestedManyWithoutAccessRoleInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutAccessRoleInput
 }
 
 export type AccessRoleUpdateInput = {
@@ -283,6 +288,7 @@ export type AccessRoleUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionUpdateManyWithoutAccessRoleNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutAccessRoleNestedInput
 }
 
 export type AccessRoleUncheckedUpdateInput = {
@@ -294,6 +300,7 @@ export type AccessRoleUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accessRolePermissions?: Prisma.AccessRolePermissionUncheckedUpdateManyWithoutAccessRoleNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutAccessRoleNestedInput
 }
 
 export type AccessRoleCreateManyInput = {
@@ -379,6 +386,20 @@ export type AccessRoleUpdateOneRequiredWithoutAccessRolePermissionsNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccessRoleUpdateToOneWithWhereWithoutAccessRolePermissionsInput, Prisma.AccessRoleUpdateWithoutAccessRolePermissionsInput>, Prisma.AccessRoleUncheckedUpdateWithoutAccessRolePermissionsInput>
 }
 
+export type AccessRoleCreateNestedOneWithoutMembershipsInput = {
+  create?: Prisma.XOR<Prisma.AccessRoleCreateWithoutMembershipsInput, Prisma.AccessRoleUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.AccessRoleCreateOrConnectWithoutMembershipsInput
+  connect?: Prisma.AccessRoleWhereUniqueInput
+}
+
+export type AccessRoleUpdateOneRequiredWithoutMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccessRoleCreateWithoutMembershipsInput, Prisma.AccessRoleUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.AccessRoleCreateOrConnectWithoutMembershipsInput
+  upsert?: Prisma.AccessRoleUpsertWithoutMembershipsInput
+  connect?: Prisma.AccessRoleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccessRoleUpdateToOneWithWhereWithoutMembershipsInput, Prisma.AccessRoleUpdateWithoutMembershipsInput>, Prisma.AccessRoleUncheckedUpdateWithoutMembershipsInput>
+}
+
 export type AccessRoleCreateWithoutAccessRolePermissionsInput = {
   id?: string
   code: string
@@ -387,6 +408,7 @@ export type AccessRoleCreateWithoutAccessRolePermissionsInput = {
   status?: $Enums.AccessRoleStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutAccessRoleInput
 }
 
 export type AccessRoleUncheckedCreateWithoutAccessRolePermissionsInput = {
@@ -397,6 +419,7 @@ export type AccessRoleUncheckedCreateWithoutAccessRolePermissionsInput = {
   status?: $Enums.AccessRoleStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutAccessRoleInput
 }
 
 export type AccessRoleCreateOrConnectWithoutAccessRolePermissionsInput = {
@@ -423,6 +446,7 @@ export type AccessRoleUpdateWithoutAccessRolePermissionsInput = {
   status?: Prisma.EnumAccessRoleStatusFieldUpdateOperationsInput | $Enums.AccessRoleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutAccessRoleNestedInput
 }
 
 export type AccessRoleUncheckedUpdateWithoutAccessRolePermissionsInput = {
@@ -433,6 +457,67 @@ export type AccessRoleUncheckedUpdateWithoutAccessRolePermissionsInput = {
   status?: Prisma.EnumAccessRoleStatusFieldUpdateOperationsInput | $Enums.AccessRoleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutAccessRoleNestedInput
+}
+
+export type AccessRoleCreateWithoutMembershipsInput = {
+  id?: string
+  code: string
+  name: string
+  description: string
+  status?: $Enums.AccessRoleStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accessRolePermissions?: Prisma.AccessRolePermissionCreateNestedManyWithoutAccessRoleInput
+}
+
+export type AccessRoleUncheckedCreateWithoutMembershipsInput = {
+  id?: string
+  code: string
+  name: string
+  description: string
+  status?: $Enums.AccessRoleStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accessRolePermissions?: Prisma.AccessRolePermissionUncheckedCreateNestedManyWithoutAccessRoleInput
+}
+
+export type AccessRoleCreateOrConnectWithoutMembershipsInput = {
+  where: Prisma.AccessRoleWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccessRoleCreateWithoutMembershipsInput, Prisma.AccessRoleUncheckedCreateWithoutMembershipsInput>
+}
+
+export type AccessRoleUpsertWithoutMembershipsInput = {
+  update: Prisma.XOR<Prisma.AccessRoleUpdateWithoutMembershipsInput, Prisma.AccessRoleUncheckedUpdateWithoutMembershipsInput>
+  create: Prisma.XOR<Prisma.AccessRoleCreateWithoutMembershipsInput, Prisma.AccessRoleUncheckedCreateWithoutMembershipsInput>
+  where?: Prisma.AccessRoleWhereInput
+}
+
+export type AccessRoleUpdateToOneWithWhereWithoutMembershipsInput = {
+  where?: Prisma.AccessRoleWhereInput
+  data: Prisma.XOR<Prisma.AccessRoleUpdateWithoutMembershipsInput, Prisma.AccessRoleUncheckedUpdateWithoutMembershipsInput>
+}
+
+export type AccessRoleUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAccessRoleStatusFieldUpdateOperationsInput | $Enums.AccessRoleStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accessRolePermissions?: Prisma.AccessRolePermissionUpdateManyWithoutAccessRoleNestedInput
+}
+
+export type AccessRoleUncheckedUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAccessRoleStatusFieldUpdateOperationsInput | $Enums.AccessRoleStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accessRolePermissions?: Prisma.AccessRolePermissionUncheckedUpdateManyWithoutAccessRoleNestedInput
 }
 
 
@@ -442,10 +527,12 @@ export type AccessRoleUncheckedUpdateWithoutAccessRolePermissionsInput = {
 
 export type AccessRoleCountOutputType = {
   accessRolePermissions: number
+  memberships: number
 }
 
 export type AccessRoleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accessRolePermissions?: boolean | AccessRoleCountOutputTypeCountAccessRolePermissionsArgs
+  memberships?: boolean | AccessRoleCountOutputTypeCountMembershipsArgs
 }
 
 /**
@@ -465,6 +552,13 @@ export type AccessRoleCountOutputTypeCountAccessRolePermissionsArgs<ExtArgs exte
   where?: Prisma.AccessRolePermissionWhereInput
 }
 
+/**
+ * AccessRoleCountOutputType without action
+ */
+export type AccessRoleCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipWhereInput
+}
+
 
 export type AccessRoleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -475,6 +569,7 @@ export type AccessRoleSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   accessRolePermissions?: boolean | Prisma.AccessRole$accessRolePermissionsArgs<ExtArgs>
+  memberships?: boolean | Prisma.AccessRole$membershipsArgs<ExtArgs>
   _count?: boolean | Prisma.AccessRoleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["accessRole"]>
 
@@ -511,6 +606,7 @@ export type AccessRoleSelectScalar = {
 export type AccessRoleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "description" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["accessRole"]>
 export type AccessRoleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accessRolePermissions?: boolean | Prisma.AccessRole$accessRolePermissionsArgs<ExtArgs>
+  memberships?: boolean | Prisma.AccessRole$membershipsArgs<ExtArgs>
   _count?: boolean | Prisma.AccessRoleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccessRoleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -520,6 +616,7 @@ export type $AccessRolePayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "AccessRole"
   objects: {
     accessRolePermissions: Prisma.$AccessRolePermissionPayload<ExtArgs>[]
+    memberships: Prisma.$MembershipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -924,6 +1021,7 @@ readonly fields: AccessRoleFieldRefs;
 export interface Prisma__AccessRoleClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accessRolePermissions<T extends Prisma.AccessRole$accessRolePermissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccessRole$accessRolePermissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessRolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  memberships<T extends Prisma.AccessRole$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccessRole$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1374,6 +1472,30 @@ export type AccessRole$accessRolePermissionsArgs<ExtArgs extends runtime.Types.E
   take?: number
   skip?: number
   distinct?: Prisma.AccessRolePermissionScalarFieldEnum | Prisma.AccessRolePermissionScalarFieldEnum[]
+}
+
+/**
+ * AccessRole.memberships
+ */
+export type AccessRole$membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Membership
+   */
+  select?: Prisma.MembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Membership
+   */
+  omit?: Prisma.MembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipInclude<ExtArgs> | null
+  where?: Prisma.MembershipWhereInput
+  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
 }
 
 /**

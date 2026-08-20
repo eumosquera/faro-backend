@@ -77,3 +77,8 @@ export type AccessRolePermission = Prisma.AccessRolePermissionModel
  * 
  */
 export type AccessAccount = Prisma.AccessAccountModel
+/**
+ * Model Membership
+ * 
+ */
+export type Membership = Prisma.MembershipModel

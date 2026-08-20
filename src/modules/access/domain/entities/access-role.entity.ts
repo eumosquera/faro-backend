@@ -44,4 +44,8 @@ export class AccessRole {
   get updatedAt(): Date {
     return this.props.updatedAt;
   }
+
+  isActive(): boolean {
+    return this.status === 'ACTIVE';
+  }
 }

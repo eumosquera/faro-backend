@@ -200,6 +200,7 @@ export type ResidentialComplexWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ResidentialComplex"> | Date | string
   physicalGroups?: Prisma.PhysicalGroupListRelationFilter
   privateUnits?: Prisma.PrivateUnitListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
 }
 
 export type ResidentialComplexOrderByWithRelationInput = {
@@ -212,6 +213,7 @@ export type ResidentialComplexOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   physicalGroups?: Prisma.PhysicalGroupOrderByRelationAggregateInput
   privateUnits?: Prisma.PrivateUnitOrderByRelationAggregateInput
+  memberships?: Prisma.MembershipOrderByRelationAggregateInput
 }
 
 export type ResidentialComplexWhereUniqueInput = Prisma.AtLeast<{
@@ -227,6 +229,7 @@ export type ResidentialComplexWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"ResidentialComplex"> | Date | string
   physicalGroups?: Prisma.PhysicalGroupListRelationFilter
   privateUnits?: Prisma.PrivateUnitListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
 }, "id">
 
 export type ResidentialComplexOrderByWithAggregationInput = {
@@ -265,6 +268,7 @@ export type ResidentialComplexCreateInput = {
   updatedAt?: Date | string
   physicalGroups?: Prisma.PhysicalGroupCreateNestedManyWithoutResidentialComplexInput
   privateUnits?: Prisma.PrivateUnitCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexUncheckedCreateInput = {
@@ -277,6 +281,7 @@ export type ResidentialComplexUncheckedCreateInput = {
   updatedAt?: Date | string
   physicalGroups?: Prisma.PhysicalGroupUncheckedCreateNestedManyWithoutResidentialComplexInput
   privateUnits?: Prisma.PrivateUnitUncheckedCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexUpdateInput = {
@@ -289,6 +294,7 @@ export type ResidentialComplexUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   physicalGroups?: Prisma.PhysicalGroupUpdateManyWithoutResidentialComplexNestedInput
   privateUnits?: Prisma.PrivateUnitUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutResidentialComplexNestedInput
 }
 
 export type ResidentialComplexUncheckedUpdateInput = {
@@ -301,6 +307,7 @@ export type ResidentialComplexUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   physicalGroups?: Prisma.PhysicalGroupUncheckedUpdateManyWithoutResidentialComplexNestedInput
   privateUnits?: Prisma.PrivateUnitUncheckedUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutResidentialComplexNestedInput
 }
 
 export type ResidentialComplexCreateManyInput = {
@@ -400,6 +407,20 @@ export type ResidentialComplexUpdateOneRequiredWithoutPrivateUnitsNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.ResidentialComplexUpdateToOneWithWhereWithoutPrivateUnitsInput, Prisma.ResidentialComplexUpdateWithoutPrivateUnitsInput>, Prisma.ResidentialComplexUncheckedUpdateWithoutPrivateUnitsInput>
 }
 
+export type ResidentialComplexCreateNestedOneWithoutMembershipsInput = {
+  create?: Prisma.XOR<Prisma.ResidentialComplexCreateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.ResidentialComplexCreateOrConnectWithoutMembershipsInput
+  connect?: Prisma.ResidentialComplexWhereUniqueInput
+}
+
+export type ResidentialComplexUpdateOneRequiredWithoutMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.ResidentialComplexCreateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.ResidentialComplexCreateOrConnectWithoutMembershipsInput
+  upsert?: Prisma.ResidentialComplexUpsertWithoutMembershipsInput
+  connect?: Prisma.ResidentialComplexWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ResidentialComplexUpdateToOneWithWhereWithoutMembershipsInput, Prisma.ResidentialComplexUpdateWithoutMembershipsInput>, Prisma.ResidentialComplexUncheckedUpdateWithoutMembershipsInput>
+}
+
 export type ResidentialComplexCreateWithoutPhysicalGroupsInput = {
   id?: string
   name: string
@@ -409,6 +430,7 @@ export type ResidentialComplexCreateWithoutPhysicalGroupsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privateUnits?: Prisma.PrivateUnitCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexUncheckedCreateWithoutPhysicalGroupsInput = {
@@ -420,6 +442,7 @@ export type ResidentialComplexUncheckedCreateWithoutPhysicalGroupsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privateUnits?: Prisma.PrivateUnitUncheckedCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexCreateOrConnectWithoutPhysicalGroupsInput = {
@@ -447,6 +470,7 @@ export type ResidentialComplexUpdateWithoutPhysicalGroupsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privateUnits?: Prisma.PrivateUnitUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutResidentialComplexNestedInput
 }
 
 export type ResidentialComplexUncheckedUpdateWithoutPhysicalGroupsInput = {
@@ -458,6 +482,7 @@ export type ResidentialComplexUncheckedUpdateWithoutPhysicalGroupsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privateUnits?: Prisma.PrivateUnitUncheckedUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutResidentialComplexNestedInput
 }
 
 export type ResidentialComplexCreateWithoutPrivateUnitsInput = {
@@ -469,6 +494,7 @@ export type ResidentialComplexCreateWithoutPrivateUnitsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   physicalGroups?: Prisma.PhysicalGroupCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexUncheckedCreateWithoutPrivateUnitsInput = {
@@ -480,6 +506,7 @@ export type ResidentialComplexUncheckedCreateWithoutPrivateUnitsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   physicalGroups?: Prisma.PhysicalGroupUncheckedCreateNestedManyWithoutResidentialComplexInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutResidentialComplexInput
 }
 
 export type ResidentialComplexCreateOrConnectWithoutPrivateUnitsInput = {
@@ -507,6 +534,7 @@ export type ResidentialComplexUpdateWithoutPrivateUnitsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   physicalGroups?: Prisma.PhysicalGroupUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutResidentialComplexNestedInput
 }
 
 export type ResidentialComplexUncheckedUpdateWithoutPrivateUnitsInput = {
@@ -518,6 +546,71 @@ export type ResidentialComplexUncheckedUpdateWithoutPrivateUnitsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   physicalGroups?: Prisma.PhysicalGroupUncheckedUpdateManyWithoutResidentialComplexNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutResidentialComplexNestedInput
+}
+
+export type ResidentialComplexCreateWithoutMembershipsInput = {
+  id?: string
+  name: string
+  address: string
+  city: string
+  status?: $Enums.ResidentialComplexStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  physicalGroups?: Prisma.PhysicalGroupCreateNestedManyWithoutResidentialComplexInput
+  privateUnits?: Prisma.PrivateUnitCreateNestedManyWithoutResidentialComplexInput
+}
+
+export type ResidentialComplexUncheckedCreateWithoutMembershipsInput = {
+  id?: string
+  name: string
+  address: string
+  city: string
+  status?: $Enums.ResidentialComplexStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  physicalGroups?: Prisma.PhysicalGroupUncheckedCreateNestedManyWithoutResidentialComplexInput
+  privateUnits?: Prisma.PrivateUnitUncheckedCreateNestedManyWithoutResidentialComplexInput
+}
+
+export type ResidentialComplexCreateOrConnectWithoutMembershipsInput = {
+  where: Prisma.ResidentialComplexWhereUniqueInput
+  create: Prisma.XOR<Prisma.ResidentialComplexCreateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedCreateWithoutMembershipsInput>
+}
+
+export type ResidentialComplexUpsertWithoutMembershipsInput = {
+  update: Prisma.XOR<Prisma.ResidentialComplexUpdateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedUpdateWithoutMembershipsInput>
+  create: Prisma.XOR<Prisma.ResidentialComplexCreateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedCreateWithoutMembershipsInput>
+  where?: Prisma.ResidentialComplexWhereInput
+}
+
+export type ResidentialComplexUpdateToOneWithWhereWithoutMembershipsInput = {
+  where?: Prisma.ResidentialComplexWhereInput
+  data: Prisma.XOR<Prisma.ResidentialComplexUpdateWithoutMembershipsInput, Prisma.ResidentialComplexUncheckedUpdateWithoutMembershipsInput>
+}
+
+export type ResidentialComplexUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumResidentialComplexStatusFieldUpdateOperationsInput | $Enums.ResidentialComplexStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  physicalGroups?: Prisma.PhysicalGroupUpdateManyWithoutResidentialComplexNestedInput
+  privateUnits?: Prisma.PrivateUnitUpdateManyWithoutResidentialComplexNestedInput
+}
+
+export type ResidentialComplexUncheckedUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumResidentialComplexStatusFieldUpdateOperationsInput | $Enums.ResidentialComplexStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  physicalGroups?: Prisma.PhysicalGroupUncheckedUpdateManyWithoutResidentialComplexNestedInput
+  privateUnits?: Prisma.PrivateUnitUncheckedUpdateManyWithoutResidentialComplexNestedInput
 }
 
 
@@ -528,11 +621,13 @@ export type ResidentialComplexUncheckedUpdateWithoutPrivateUnitsInput = {
 export type ResidentialComplexCountOutputType = {
   physicalGroups: number
   privateUnits: number
+  memberships: number
 }
 
 export type ResidentialComplexCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   physicalGroups?: boolean | ResidentialComplexCountOutputTypeCountPhysicalGroupsArgs
   privateUnits?: boolean | ResidentialComplexCountOutputTypeCountPrivateUnitsArgs
+  memberships?: boolean | ResidentialComplexCountOutputTypeCountMembershipsArgs
 }
 
 /**
@@ -559,6 +654,13 @@ export type ResidentialComplexCountOutputTypeCountPrivateUnitsArgs<ExtArgs exten
   where?: Prisma.PrivateUnitWhereInput
 }
 
+/**
+ * ResidentialComplexCountOutputType without action
+ */
+export type ResidentialComplexCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipWhereInput
+}
+
 
 export type ResidentialComplexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -570,6 +672,7 @@ export type ResidentialComplexSelect<ExtArgs extends runtime.Types.Extensions.In
   updatedAt?: boolean
   physicalGroups?: boolean | Prisma.ResidentialComplex$physicalGroupsArgs<ExtArgs>
   privateUnits?: boolean | Prisma.ResidentialComplex$privateUnitsArgs<ExtArgs>
+  memberships?: boolean | Prisma.ResidentialComplex$membershipsArgs<ExtArgs>
   _count?: boolean | Prisma.ResidentialComplexCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["residentialComplex"]>
 
@@ -607,6 +710,7 @@ export type ResidentialComplexOmit<ExtArgs extends runtime.Types.Extensions.Inte
 export type ResidentialComplexInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   physicalGroups?: boolean | Prisma.ResidentialComplex$physicalGroupsArgs<ExtArgs>
   privateUnits?: boolean | Prisma.ResidentialComplex$privateUnitsArgs<ExtArgs>
+  memberships?: boolean | Prisma.ResidentialComplex$membershipsArgs<ExtArgs>
   _count?: boolean | Prisma.ResidentialComplexCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ResidentialComplexIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -617,6 +721,7 @@ export type $ResidentialComplexPayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     physicalGroups: Prisma.$PhysicalGroupPayload<ExtArgs>[]
     privateUnits: Prisma.$PrivateUnitPayload<ExtArgs>[]
+    memberships: Prisma.$MembershipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1022,6 +1127,7 @@ export interface Prisma__ResidentialComplexClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   physicalGroups<T extends Prisma.ResidentialComplex$physicalGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ResidentialComplex$physicalGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PhysicalGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   privateUnits<T extends Prisma.ResidentialComplex$privateUnitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ResidentialComplex$privateUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrivateUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  memberships<T extends Prisma.ResidentialComplex$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ResidentialComplex$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1496,6 +1602,30 @@ export type ResidentialComplex$privateUnitsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.PrivateUnitScalarFieldEnum | Prisma.PrivateUnitScalarFieldEnum[]
+}
+
+/**
+ * ResidentialComplex.memberships
+ */
+export type ResidentialComplex$membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Membership
+   */
+  select?: Prisma.MembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Membership
+   */
+  omit?: Prisma.MembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipInclude<ExtArgs> | null
+  where?: Prisma.MembershipWhereInput
+  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
 }
 
 /**

@@ -14,15 +14,6 @@ describe('Application (e2e)', () => {
   let app: INestApplication;
   let residentialComplexId: string;
 
-  const testIdentificationNumbers = [
-    '123456789',
-    '987654321',
-    '456789123',
-    '111222333',
-    '555666777',
-  ];
-  const testResidentialComplexNames = ['E2E Residential Complex', 'Another E2E Complex'];
-
   function getResponseId(response: { body: unknown }): string {
     const body = response.body as Record<string, unknown>;
 
@@ -64,142 +55,27 @@ describe('Application (e2e)', () => {
 
     const prisma = app.get(PrismaService);
 
-    await prisma.$transaction([
-      prisma.subscription.deleteMany({
-        where: {
-          OR: [
-            {
-              person: {
-                identificationNumber: {
-                  in: testIdentificationNumbers,
-                },
-              },
-            },
-            {
-              plan: {
-                code: {
-                  startsWith: 'E2E-',
-                },
-              },
-            },
-          ],
-        },
-      }),
-      prisma.personUnit.deleteMany({
-        where: {
-          OR: [
-            {
-              person: {
-                identificationNumber: {
-                  in: testIdentificationNumbers,
-                },
-              },
-            },
-            {
-              privateUnit: {
-                identifier: {
-                  startsWith: 'E2E-',
-                },
-              },
-            },
-            {
-              rolePersona: {
-                code: {
-                  startsWith: 'E2E-ROLE-',
-                },
-              },
-            },
-          ],
-        },
-      }),
-      prisma.privateUnit.deleteMany({
-        where: {
-          residentialComplex: {
-            name: {
-              in: testResidentialComplexNames,
-            },
-          },
-        },
-      }),
-      prisma.physicalGroup.deleteMany({
-        where: {
-          residentialComplex: {
-            name: {
-              in: testResidentialComplexNames,
-            },
-          },
-        },
-      }),
-      prisma.residentialComplex.deleteMany({
-        where: {
-          name: {
-            in: testResidentialComplexNames,
-          },
-        },
-      }),
-      prisma.rolePersona.deleteMany({
-        where: {
-          code: {
-            startsWith: 'E2E-ROLE-',
-          },
-        },
-      }),
-      prisma.plan.deleteMany({
-        where: {
-          code: {
-            startsWith: 'E2E-',
-          },
-        },
-      }),
-      prisma.accessRolePermission.deleteMany({
-        where: {
-          OR: [
-            {
-              accessRole: {
-                code: {
-                  startsWith: 'E2E-',
-                },
-              },
-            },
-            {
-              permission: {
-                code: {
-                  startsWith: 'E2E-',
-                },
-              },
-            },
-          ],
-        },
-      }),
-      prisma.accessRole.deleteMany({
-        where: {
-          code: {
-            startsWith: 'E2E-',
-          },
-        },
-      }),
-      prisma.permission.deleteMany({
-        where: {
-          code: {
-            startsWith: 'E2E-',
-          },
-        },
-      }),
-      prisma.accessAccount.deleteMany({
-        where: {
-          externalAuthId: {
-            startsWith: 'E2E-',
-          },
-        },
-      }),
-      prisma.person.deleteMany({
-        where: {
-          identificationNumber: {
-            in: testIdentificationNumbers,
-          },
-        },
-      }),
-    ]);
+    await prisma.subscription.deleteMany();
+    await prisma.personUnit.deleteMany();
+    await prisma.accessRolePermission.deleteMany();
+
+    // 2. Membership depende de Person, ResidentialComplex,
+    await prisma.membership.deleteMany();
+
+    // 3. Entidades hijas del ResidentialComplex
+    await prisma.privateUnit.deleteMany();
+    await prisma.physicalGroup.deleteMany();
+
+    // 4. Entidades que ya no tienen Membership / relaciones
+    await prisma.accessAccount.deleteMany();
+    await prisma.rolePersona.deleteMany();
+    await prisma.plan.deleteMany();
+    await prisma.accessRole.deleteMany();
+    await prisma.permission.deleteMany();
+
+    // 5. Padre
+    await prisma.residentialComplex.deleteMany();
+    await prisma.person.deleteMany();
 
     const createResidentialComplexUseCase = app.get(CreateResidentialComplexUseCase);
 
@@ -1692,9 +1568,9 @@ describe('Application (e2e)', () => {
       .post('/api/v1/people')
       .send({
         identificationType: 'CC',
-        identificationNumber: 'E2E-ACCESS-PERSISTENCE-001',
+        identificationNumber: '697095',
         fullName: 'Juan Pérez',
-        email: 'E2E-ACCESS-PERSISTENCE-001@example.com',
+        email: 'dbatt0@wired.com',
       })
       .expect(201);
 
@@ -1754,7 +1630,7 @@ describe('Application (e2e)', () => {
         identificationType: 'CC',
         identificationNumber: '987654321',
         fullName: 'María Pérez',
-        email: 'maria.access.e2e@example.com',
+        email: 'smulliner1@usnews.com',
       })
       .expect(201);
 
@@ -1798,7 +1674,7 @@ describe('Application (e2e)', () => {
         identificationType: 'CC',
         identificationNumber: '456789123',
         fullName: 'Carlos Primera Persona',
-        email: 'carlos.first.e2e@example.com',
+        email: 'achristophle3@ft.com',
       })
       .expect(201);
 
@@ -1808,7 +1684,7 @@ describe('Application (e2e)', () => {
         identificationType: 'CC',
         identificationNumber: '111222333',
         fullName: 'Carlos Segunda Persona',
-        email: 'carlos.second.e2e@example.com',
+        email: 'nshorey4@sogou.com',
       })
       .expect(201);
 
@@ -1855,7 +1731,7 @@ describe('Application (e2e)', () => {
         identificationType: 'TI',
         identificationNumber: '555666777',
         fullName: 'Persona Access Account',
-        email: 'access-account-unknown.e2e@example.com',
+        email: 'rvalentim8@ehow.com',
       })
       .expect(201);
 
@@ -1887,9 +1763,9 @@ describe('Application (e2e)', () => {
       .post('/api/v1/people')
       .send({
         identificationType: 'CE',
-        identificationNumber: 'E2E-ACCESS-PERSISTENCE-002',
+        identificationNumber: '323784',
         fullName: 'Persona Persistencia',
-        email: 'E2E-ACCESS-PERSISTENCE-002@example.com',
+        email: 'aspriggin0@weebly.com',
       })
       .expect(201);
 
@@ -1923,9 +1799,9 @@ describe('Application (e2e)', () => {
       .post('/api/v1/people')
       .send({
         identificationType: 'CC',
-        identificationNumber: 'E2E-ACCESS-DEACTIVATE-001',
+        identificationNumber: '500418',
         fullName: 'E2E Access Deactivate',
-        email: 'E2E-ACCESS-DEACTIVATE-001@example.com',
+        email: 'bgreenlies5@oakley.com',
       })
       .expect(201);
 
@@ -1962,9 +1838,9 @@ describe('Application (e2e)', () => {
       .post('/api/v1/people')
       .send({
         identificationType: 'CC',
-        identificationNumber: 'E2E-ACCESS-ACTIVATE-001',
+        identificationNumber: '289489',
         fullName: 'E2E Access Activate',
-        email: 'E2E-ACCESS-ACTIVATE-001@example.com',
+        email: 'gduxbarryg@com.com',
       })
       .expect(201);
 
@@ -1998,6 +1874,653 @@ describe('Application (e2e)', () => {
 
     expect(accessAccount).not.toBeNull();
     expect(accessAccount?.status).toBe('ACTIVE');
+  });
+
+  it('/api/v1/memberships (POST) creates a membership', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '212397',
+        fullName: 'Persona Membership',
+        email: 'egerami@about.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIPPORTERO',
+        name: 'Portero Membership',
+        description: 'Rol de acceso para prueba de membresía.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: 'E2E-MEMBERSHIP-ACCOUNT-001',
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        status: 'ACTIVE',
+        endDate: null,
+      }),
+    );
+
+    const body = response.body as Record<string, unknown>;
+
+    expect(typeof body.id).toBe('string');
+    expect(typeof body.startDate).toBe('string');
+    expect(typeof body.createdAt).toBe('string');
+    expect(typeof body.updatedAt).toBe('string');
+  });
+
+  it('/api/v1/memberships (POST) creates a membership without an access account', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '225788',
+        fullName: 'Membership Without Account',
+        email: 'dfullunj@istockphoto.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-NO-ACCOUNT',
+        name: 'Membership No Account',
+        description: 'Rol para prueba sin cuenta.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        status: 'ACTIVE',
+        endDate: null,
+      }),
+    );
+  });
+
+  it('/api/v1/memberships (POST) returns 404 when person does not exist', async () => {
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-NO-PERSON',
+        name: 'Membership No Person',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'PERSON_NOT_FOUND',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) returns 404 when residential complex does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '803266',
+        fullName: 'Membership No Complex',
+        email: 'ehallinl@nydailynews.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-NO-COMPLEX',
+        name: 'Membership No Complex',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId: '00000000-0000-0000-0000-000000000000',
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'RESIDENTIAL_COMPLEX_NOT_FOUND',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) returns 404 when access role does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '759901',
+        fullName: 'Membership No Role',
+        email: 'jheinekenn@phpbb.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId: '00000000-0000-0000-0000-000000000000',
+        startDate: '2026-08-18',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'ACCESS_ROLE_NOT_FOUND',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) returns 409 when access role is inactive', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '877125',
+        fullName: 'Membership Inactive Role',
+        email: 'cdevericko@yellowbook.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-INACTIVE-ROLE',
+        name: 'Membership Inactive Role',
+        description: 'Rol inactivo para prueba E2E.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const prisma = app.get(PrismaService);
+
+    await prisma.accessRole.update({
+      where: {
+        id: accessRoleId,
+      },
+      data: {
+        status: 'INACTIVE',
+      },
+    });
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            code: 'ACCESS_ROLE_INACTIVE',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) returns 404 when access account does not exist', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '372142',
+        fullName: 'Membership No Account',
+        email: 'echilderhouser@jimdo.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-NO-ACCOUNT-ROLE',
+        name: 'Membership No Account Role',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: '00000000-0000-0000-0000-000000000000',
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(404)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 404,
+            code: 'ACCESS_ACCOUNT_NOT_FOUND',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) rejects access account belonging to another person', async () => {
+    const firstPersonResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '822748',
+        fullName: 'Membership First Person',
+        email: 'cmickleborought@yolasite.com',
+      })
+      .expect(201);
+
+    const secondPersonResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '358091',
+        fullName: 'Membership Second Person',
+        email: 'abarszczewskiu@answers.com',
+      })
+      .expect(201);
+
+    const firstPersonId = getResponseId(firstPersonResponse);
+    const secondPersonId = getResponseId(secondPersonResponse);
+
+    const accountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId: firstPersonId,
+        externalAuthId: 'E2E-MEMBERSHIP-ACCOUNT-007',
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accountResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-MISMATCH',
+        name: 'Membership Account Mismatch',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(roleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId: secondPersonId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            path: '/api/v1/memberships',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/memberships (POST) rejects duplicate active membership for the same person and residential complex', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '995173',
+        fullName: 'Membership Duplicate',
+        email: 'ldaniaudx@hao123.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const firstRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-DUPLICATE-1',
+        name: 'Membership Duplicate One',
+        description: 'Primer rol.',
+      })
+      .expect(201);
+
+    const secondRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-DUPLICATE-2',
+        name: 'Membership Duplicate Two',
+        description: 'Segundo rol.',
+      })
+      .expect(201);
+
+    const firstRoleId = getResponseId(firstRoleResponse);
+    const secondRoleId = getResponseId(secondRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId: firstRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId: secondRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(409)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 409,
+            path: '/api/v1/memberships',
+          }),
+        );
+
+        expect(typeof body.message).toBe('string');
+        expect(typeof body.timestamp).toBe('string');
+      });
+  });
+
+  it('/api/v1/memberships (POST) creates a membership with an end date', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '968488',
+        fullName: 'Membership End Date',
+        email: 'ahillan11@reference.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-END-DATE-ROLE',
+        name: 'Membership End Date Role',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(roleResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+        endDate: '2026-12-31',
+      })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        status: 'ACTIVE',
+        endDate: '2026-12-31T00:00:00.000Z',
+      }),
+    );
+  });
+
+  it('/api/v1/memberships (POST) rejects endDate before startDate', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: '964624',
+        fullName: 'Membership Date Range',
+        email: 'cmacdunleavy14@aol.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-DATE-RANGE-ROLE',
+        name: 'Membership Date Range Role',
+        description: 'Rol para prueba.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(roleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+        endDate: '2026-08-17',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) rejects unknown properties', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId: '00000000-0000-0000-0000-000000000000',
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId: '00000000-0000-0000-0000-000000000001',
+        startDate: '2026-08-18',
+        unauthorizedField: 'not allowed',
+      })
+      .expect(400)
+      .expect((response) => {
+        const body = response.body as Record<string, unknown>;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            statusCode: 400,
+            code: 'BAD_REQUEST',
+            path: '/api/v1/memberships',
+          }),
+        );
+      });
+  });
+
+  it('/api/v1/memberships (POST) persists the membership relationship', async () => {
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CE',
+        identificationNumber: '261021',
+        fullName: 'Membership Persistence',
+        email: 'mskey1e@hao123.com',
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const roleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: 'E2E-MEMBERSHIP-PERSISTENCE-ROLE',
+        name: 'Membership Persistence Role',
+        description: 'Rol para prueba de persistencia.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(roleResponse);
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId: null,
+        accessRoleId,
+        startDate: '2026-08-18',
+      })
+      .expect(201);
+
+    const membershipId = getResponseId(response);
+
+    const prisma = app.get(PrismaService);
+
+    const membership = await prisma.membership.findUnique({
+      where: {
+        id: membershipId,
+      },
+    });
+
+    expect(membership).not.toBeNull();
+    expect(membership?.personId).toBe(personId);
+    expect(membership?.residentialComplexId).toBe(residentialComplexId);
+    expect(membership?.accessRoleId).toBe(accessRoleId);
+    expect(membership?.accessAccountId).toBeNull();
+    expect(membership?.status).toBe('ACTIVE');
   });
 
   it('/api/v1/person-units (POST) creates a person-unit relationship', async () => {

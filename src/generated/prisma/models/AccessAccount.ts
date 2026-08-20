@@ -191,6 +191,7 @@ export type AccessAccountWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AccessAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AccessAccount"> | Date | string
   person?: Prisma.XOR<Prisma.PersonScalarRelationFilter, Prisma.PersonWhereInput>
+  memberships?: Prisma.MembershipListRelationFilter
 }
 
 export type AccessAccountOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type AccessAccountOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   person?: Prisma.PersonOrderByWithRelationInput
+  memberships?: Prisma.MembershipOrderByRelationAggregateInput
 }
 
 export type AccessAccountWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type AccessAccountWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AccessAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AccessAccount"> | Date | string
   person?: Prisma.XOR<Prisma.PersonScalarRelationFilter, Prisma.PersonWhereInput>
+  memberships?: Prisma.MembershipListRelationFilter
 }, "id" | "personId" | "externalAuthId">
 
 export type AccessAccountOrderByWithAggregationInput = {
@@ -247,6 +250,7 @@ export type AccessAccountCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   person: Prisma.PersonCreateNestedOneWithoutAccessAccountInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutAccessAccountInput
 }
 
 export type AccessAccountUncheckedCreateInput = {
@@ -256,6 +260,7 @@ export type AccessAccountUncheckedCreateInput = {
   status?: $Enums.AccessAccountStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutAccessAccountInput
 }
 
 export type AccessAccountUpdateInput = {
@@ -265,6 +270,7 @@ export type AccessAccountUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   person?: Prisma.PersonUpdateOneRequiredWithoutAccessAccountNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutAccessAccountNestedInput
 }
 
 export type AccessAccountUncheckedUpdateInput = {
@@ -274,6 +280,7 @@ export type AccessAccountUncheckedUpdateInput = {
   status?: Prisma.EnumAccessAccountStatusFieldUpdateOperationsInput | $Enums.AccessAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutAccessAccountNestedInput
 }
 
 export type AccessAccountCreateManyInput = {
@@ -370,12 +377,29 @@ export type EnumAccessAccountStatusFieldUpdateOperationsInput = {
   set?: $Enums.AccessAccountStatus
 }
 
+export type AccessAccountCreateNestedOneWithoutMembershipsInput = {
+  create?: Prisma.XOR<Prisma.AccessAccountCreateWithoutMembershipsInput, Prisma.AccessAccountUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.AccessAccountCreateOrConnectWithoutMembershipsInput
+  connect?: Prisma.AccessAccountWhereUniqueInput
+}
+
+export type AccessAccountUpdateOneWithoutMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccessAccountCreateWithoutMembershipsInput, Prisma.AccessAccountUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.AccessAccountCreateOrConnectWithoutMembershipsInput
+  upsert?: Prisma.AccessAccountUpsertWithoutMembershipsInput
+  disconnect?: Prisma.AccessAccountWhereInput | boolean
+  delete?: Prisma.AccessAccountWhereInput | boolean
+  connect?: Prisma.AccessAccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccessAccountUpdateToOneWithWhereWithoutMembershipsInput, Prisma.AccessAccountUpdateWithoutMembershipsInput>, Prisma.AccessAccountUncheckedUpdateWithoutMembershipsInput>
+}
+
 export type AccessAccountCreateWithoutPersonInput = {
   id?: string
   externalAuthId: string
   status?: $Enums.AccessAccountStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutAccessAccountInput
 }
 
 export type AccessAccountUncheckedCreateWithoutPersonInput = {
@@ -384,6 +408,7 @@ export type AccessAccountUncheckedCreateWithoutPersonInput = {
   status?: $Enums.AccessAccountStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutAccessAccountInput
 }
 
 export type AccessAccountCreateOrConnectWithoutPersonInput = {
@@ -408,6 +433,7 @@ export type AccessAccountUpdateWithoutPersonInput = {
   status?: Prisma.EnumAccessAccountStatusFieldUpdateOperationsInput | $Enums.AccessAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutAccessAccountNestedInput
 }
 
 export type AccessAccountUncheckedUpdateWithoutPersonInput = {
@@ -416,8 +442,90 @@ export type AccessAccountUncheckedUpdateWithoutPersonInput = {
   status?: Prisma.EnumAccessAccountStatusFieldUpdateOperationsInput | $Enums.AccessAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutAccessAccountNestedInput
 }
 
+export type AccessAccountCreateWithoutMembershipsInput = {
+  id?: string
+  externalAuthId: string
+  status?: $Enums.AccessAccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  person: Prisma.PersonCreateNestedOneWithoutAccessAccountInput
+}
+
+export type AccessAccountUncheckedCreateWithoutMembershipsInput = {
+  id?: string
+  personId: string
+  externalAuthId: string
+  status?: $Enums.AccessAccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AccessAccountCreateOrConnectWithoutMembershipsInput = {
+  where: Prisma.AccessAccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccessAccountCreateWithoutMembershipsInput, Prisma.AccessAccountUncheckedCreateWithoutMembershipsInput>
+}
+
+export type AccessAccountUpsertWithoutMembershipsInput = {
+  update: Prisma.XOR<Prisma.AccessAccountUpdateWithoutMembershipsInput, Prisma.AccessAccountUncheckedUpdateWithoutMembershipsInput>
+  create: Prisma.XOR<Prisma.AccessAccountCreateWithoutMembershipsInput, Prisma.AccessAccountUncheckedCreateWithoutMembershipsInput>
+  where?: Prisma.AccessAccountWhereInput
+}
+
+export type AccessAccountUpdateToOneWithWhereWithoutMembershipsInput = {
+  where?: Prisma.AccessAccountWhereInput
+  data: Prisma.XOR<Prisma.AccessAccountUpdateWithoutMembershipsInput, Prisma.AccessAccountUncheckedUpdateWithoutMembershipsInput>
+}
+
+export type AccessAccountUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalAuthId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAccessAccountStatusFieldUpdateOperationsInput | $Enums.AccessAccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  person?: Prisma.PersonUpdateOneRequiredWithoutAccessAccountNestedInput
+}
+
+export type AccessAccountUncheckedUpdateWithoutMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  personId?: Prisma.StringFieldUpdateOperationsInput | string
+  externalAuthId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAccessAccountStatusFieldUpdateOperationsInput | $Enums.AccessAccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type AccessAccountCountOutputType
+ */
+
+export type AccessAccountCountOutputType = {
+  memberships: number
+}
+
+export type AccessAccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  memberships?: boolean | AccessAccountCountOutputTypeCountMembershipsArgs
+}
+
+/**
+ * AccessAccountCountOutputType without action
+ */
+export type AccessAccountCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessAccountCountOutputType
+   */
+  select?: Prisma.AccessAccountCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AccessAccountCountOutputType without action
+ */
+export type AccessAccountCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipWhereInput
+}
 
 
 export type AccessAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -428,6 +536,8 @@ export type AccessAccountSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   updatedAt?: boolean
   person?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
+  memberships?: boolean | Prisma.AccessAccount$membershipsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccessAccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["accessAccount"]>
 
 export type AccessAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -462,6 +572,8 @@ export type AccessAccountSelectScalar = {
 export type AccessAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "personId" | "externalAuthId" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["accessAccount"]>
 export type AccessAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   person?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
+  memberships?: boolean | Prisma.AccessAccount$membershipsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccessAccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccessAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   person?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
@@ -474,6 +586,7 @@ export type $AccessAccountPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "AccessAccount"
   objects: {
     person: Prisma.$PersonPayload<ExtArgs>
+    memberships: Prisma.$MembershipPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -877,6 +990,7 @@ readonly fields: AccessAccountFieldRefs;
 export interface Prisma__AccessAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   person<T extends Prisma.PersonDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PersonDefaultArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  memberships<T extends Prisma.AccessAccount$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccessAccount$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1310,6 +1424,30 @@ export type AccessAccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many AccessAccounts to delete.
    */
   limit?: number
+}
+
+/**
+ * AccessAccount.memberships
+ */
+export type AccessAccount$membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Membership
+   */
+  select?: Prisma.MembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Membership
+   */
+  omit?: Prisma.MembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipInclude<ExtArgs> | null
+  where?: Prisma.MembershipWhereInput
+  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
 }
 
 /**

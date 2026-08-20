@@ -70,6 +70,8 @@ import { PeopleModule } from '../people/people.module';
     CreatePermissionUseCase,
     AssignPermissionToAccessRoleUseCase,
     RemovePermissionFromAccessRoleUseCase,
+    AccessRoleRepository,
+    AccessAccountRepository,
   ],
 })
 export class AccessModule {}

@@ -11,6 +11,7 @@ import { SupabaseModule } from './core/auth/supabase.module';
 import { PeopleModule } from './modules/people/people.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { AccessModule } from './modules/access/access.module';
+import { MembershipModule } from './modules/membership/membership.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AccessModule } from './modules/access/access.module';
     PeopleModule,
     SubscriptionModule,
     AccessModule,
+    MembershipModule,
   ],
   controllers: [HealthController],
   providers: [],

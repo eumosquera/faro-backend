@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createSupabaseClient } from '../../core/auth/infrastructure/supabase-client';
+import { SUPABASE_AUTH_CLIENT } from './infrastructure/authentication/supabase-auth-client.token';
 
 import { CreateAccessRoleUseCase } from './application/use-cases/create-access-role/create-access-role.use-case';
 import { AccessRoleRepository } from './domain/repositories/access-role.repository';
@@ -24,6 +27,19 @@ import { PrismaAccessAccountRepository } from './infrastructure/persistence/repo
 import { AccessAccountController } from './presentation/controllers/access-account.controller';
 import { PeopleModule } from '../people/people.module';
 
+import { AuthenticationContextService } from './application/authorization/authentication-context.service';
+import { EXTERNAL_AUTHENTICATION_SERVICE } from './domain/services/external-authentication.token';
+import { SupabaseExternalAuthenticationService } from './infrastructure/authentication/supabase-external-authentication.service';
+import { PrismaAuthenticatedUserRepository } from './infrastructure/persistence/repositories/prisma-authenticated-user.repository';
+import { AUTHENTICATED_USER_REPOSITORY } from './domain/repositories/authenticated-user.repository.token';
+import { AuthenticationGuard } from './presentation/guards/authentication.guard';
+import { AuthorizationGuard } from './presentation/guards/authorization.guard';
+
+import { AuthorizationTestController } from './presentation/controllers/authorization-test.controller';
+import { AuthorizationService } from './application/authorization/authorization.service';
+import { AUTHORIZATION_CONTEXT_REPOSITORY } from './domain/repositories/authorization-context.repository.token';
+import { PrismaAuthorizationContextRepository } from './infrastructure/persistence/repositories/prisma-authorization-context.repository';
+
 @Module({
   imports: [PeopleModule],
   controllers: [
@@ -31,6 +47,7 @@ import { PeopleModule } from '../people/people.module';
     PermissionController,
     AccessRolePermissionController,
     AccessAccountController,
+    AuthorizationTestController,
   ],
   providers: [
     PrismaAccessRoleRepository,
@@ -59,6 +76,31 @@ import { PeopleModule } from '../people/people.module';
     {
       provide: AccessAccountRepository,
       useExisting: PrismaAccessAccountRepository,
+    },
+
+    AuthenticationContextService,
+    {
+      provide: AUTHENTICATED_USER_REPOSITORY,
+      useClass: PrismaAuthenticatedUserRepository,
+    },
+
+    AuthenticationGuard,
+    AuthorizationGuard,
+    {
+      provide: EXTERNAL_AUTHENTICATION_SERVICE,
+      useClass: SupabaseExternalAuthenticationService,
+    },
+    AuthorizationService,
+
+    {
+      provide: SUPABASE_AUTH_CLIENT,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => createSupabaseClient(configService),
+    },
+
+    {
+      provide: AUTHORIZATION_CONTEXT_REPOSITORY,
+      useClass: PrismaAuthorizationContextRepository,
     },
 
     CreateAccessAccountUseCase,

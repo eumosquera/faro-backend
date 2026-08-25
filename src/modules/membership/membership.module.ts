@@ -11,6 +11,7 @@ import { MembershipRepository } from './domain/repositories/membership.repositor
 import { PrismaMembershipRepository } from './infrastructure/persistence/repositories/prisma-membership.repository';
 
 import { MembershipController } from './presentation/controllers/membership.controller';
+import { DeactivateMembershipUseCase } from './application/use-cases/deactivate-membership/deactivate-membership.use-case';
 
 @Module({
   imports: [PeopleModule, AccessModule, StructureModule],
@@ -22,7 +23,8 @@ import { MembershipController } from './presentation/controllers/membership.cont
       useExisting: PrismaMembershipRepository,
     },
     CreateMembershipUseCase,
+    DeactivateMembershipUseCase,
   ],
-  exports: [CreateMembershipUseCase, MembershipRepository],
+  exports: [CreateMembershipUseCase, MembershipRepository, DeactivateMembershipUseCase],
 })
 export class MembershipModule {}

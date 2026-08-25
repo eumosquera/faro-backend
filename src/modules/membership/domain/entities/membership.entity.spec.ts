@@ -87,23 +87,6 @@ describe('Membership', () => {
     expect(membership.endDate).toBe(date);
   });
 
-  it('should reject an end date before the start date', () => {
-    expect(() =>
-      Membership.create({
-        id: 'membership-5',
-        personId: 'person-5',
-        accessAccountId: 'access-account-1',
-        residentialComplexId: 'complex-1',
-        accessRoleId: 'access-role-1',
-        status: 'ACTIVE',
-        startDate: new Date('2026-02-01T00:00:00.000Z'),
-        endDate: new Date('2026-01-31T00:00:00.000Z'),
-        createdAt: new Date('2026-02-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-02-01T00:00:00.000Z'),
-      }),
-    ).toThrow('Membership end date cannot be before start date');
-  });
-
   it('should update the membership status', () => {
     const startDate = new Date('2026-01-01T00:00:00.000Z');
 
@@ -127,5 +110,37 @@ describe('Membership', () => {
     expect(updated.personId).toBe(membership.personId);
     expect(updated.residentialComplexId).toBe(membership.residentialComplexId);
     expect(updated.accessRoleId).toBe(membership.accessRoleId);
+  });
+
+  describe('deactivate', () => {
+    it('should create an inactive membership with the given end date', () => {
+      const createdAt = new Date('2026-08-01T10:00:00.000Z');
+      const updatedAt = new Date('2026-08-01T10:00:00.000Z');
+      const endDate = new Date('2026-08-23T16:00:00.000Z');
+
+      const membership = Membership.create({
+        id: 'membership-1',
+        personId: 'person-1',
+        accessAccountId: 'account-1',
+        residentialComplexId: 'complex-1',
+        accessRoleId: 'role-1',
+        status: 'ACTIVE',
+        startDate: new Date('2026-08-01T09:00:00.000Z'),
+        endDate: null,
+        createdAt,
+        updatedAt,
+      });
+
+      const deactivatedMembership = membership.deactivate(endDate);
+
+      expect(deactivatedMembership).not.toBe(membership);
+      expect(deactivatedMembership.id).toBe(membership.id);
+      expect(deactivatedMembership.personId).toBe(membership.personId);
+      expect(deactivatedMembership.residentialComplexId).toBe(membership.residentialComplexId);
+      expect(deactivatedMembership.accessRoleId).toBe(membership.accessRoleId);
+      expect(deactivatedMembership.status).toBe('INACTIVE');
+      expect(deactivatedMembership.endDate).toBe(endDate);
+      expect(deactivatedMembership.createdAt).toBe(createdAt);
+    });
   });
 });

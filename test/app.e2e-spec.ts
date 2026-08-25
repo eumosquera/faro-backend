@@ -24,6 +24,46 @@ describe('Application (e2e)', () => {
     return body.id;
   }
 
+  async function getTestAuthentication(): Promise<{
+    accessToken: string;
+    userId: string;
+  }> {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+    const testEmail = process.env.FARO_TEST_EMAIL;
+    const testPassword = process.env.FARO_TEST_PASSWORD;
+
+    if (!supabaseUrl || !supabasePublishableKey) {
+      throw new Error(
+        'SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY are required for authentication E2E tests',
+      );
+    }
+
+    if (!testEmail || !testPassword) {
+      throw new Error(
+        'FARO_TEST_EMAIL and FARO_TEST_PASSWORD are required for authentication E2E tests',
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabasePublishableKey);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: testEmail,
+      password: testPassword,
+    });
+
+    if (error || !data.session) {
+      throw new Error(
+        `Supabase test authentication failed: ${error?.message ?? 'No session returned'}`,
+      );
+    }
+
+    return {
+      accessToken: data.session.access_token,
+      userId: data.user.id,
+    };
+  }
+
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -3478,5 +3518,394 @@ describe('Application (e2e)', () => {
       userId: data.user.id,
       email: data.user.email ?? null,
     });
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) authorizes a user with the required permission', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-AUTHZ-${Date.now()}`,
+        fullName: 'Authorization E2E User',
+        email: `authorization-e2e-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-AUTHZ-ROLE-${Date.now()}`,
+        name: 'Authorization E2E Role',
+        description: 'Rol utilizado para probar autorización.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'RESIDENT_UPDATE',
+        name: 'Actualizar residentes',
+        description: 'Permite actualizar información de residentes.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    console.log('AUTHORIZATION RESPONSE:', response.status, response.body);
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+      authorized: true,
+    });
+
+    expect(response.body).toEqual({
+      authorized: true,
+    });
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects missing authentication', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .expect(401);
+  });
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects authenticated user without active membership', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-NO-MEMBERSHIP-${Date.now()}`,
+        fullName: 'Authorization Without Membership',
+        email: `authorization-no-membership-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(403);
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects membership from another residential complex', async () => {
+    const authentication = await getTestAuthentication();
+
+    const secondResidentialComplexResponse = await request(app.getHttpServer())
+      .post('/api/v1/residential-complexes')
+      .send({
+        name: `E2E Authorization Complex B ${Date.now()}`,
+        address: 'Carrera 50 # 50-50',
+        city: 'Cali',
+      })
+      .expect(201);
+
+    const secondResidentialComplexId = getResponseId(secondResidentialComplexResponse);
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-OTHER-COMPLEX-${Date.now()}`,
+        fullName: 'Authorization Other Complex',
+        email: `authorization-other-complex-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-OTHER-COMPLEX-ROLE-${Date.now()}`,
+        name: 'Other Complex Authorization Role',
+        description: 'Rol utilizado para probar aislamiento entre conjuntos.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'RESIDENT_UPDATE',
+        name: 'Actualizar residentes',
+        description: 'Permite actualizar información de residentes.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(
+        `/api/v1/access/test/residential-complexes/${secondResidentialComplexId}/resident-update`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(403);
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects user without required permission', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-NO-PERMISSION-${Date.now()}`,
+        fullName: 'Authorization Without Permission',
+        email: `authorization-no-permission-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-NO-PERMISSION-ROLE-${Date.now()}`,
+        name: 'Authorization Without Permission Role',
+        description: 'Rol utilizado para probar ausencia de permiso.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(403);
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects user without required permission', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-NO-PERMISSION-${Date.now()}`,
+        fullName: 'Authorization Without Permission',
+        email: `authorization-no-permission-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-NO-PERMISSION-ROLE-${Date.now()}`,
+        name: 'Authorization Without Permission Role',
+        description: 'Rol utilizado para probar ausencia de permiso.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(403);
+  }, 15000);
+
+  it('/api/v1/access/test/residential-complexes/:residentialComplexId/resident-update (GET) rejects user with inactive membership', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-INACTIVE-MEMBERSHIP-${Date.now()}`,
+        fullName: 'Authorization Inactive Membership',
+        email: `authorization-inactive-membership-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-INACTIVE-MEMBERSHIP-ROLE-${Date.now()}`,
+        name: 'Authorization Inactive Membership Role',
+        description: 'Rol utilizado para probar una membership inactiva.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'RESIDENT_UPDATE',
+        name: 'Actualizar residentes',
+        description: 'Permite actualizar información de residentes.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    const membershipResponse = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const membershipId = getResponseId(membershipResponse);
+
+    await request(app.getHttpServer())
+      .patch(`/api/v1/memberships/${membershipId}/deactivate`)
+      .expect(200);
+
+    const response = await request(app.getHttpServer())
+      .get(`/api/v1/access/test/residential-complexes/${residentialComplexId}/resident-update`)
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(403);
   }, 15000);
 });

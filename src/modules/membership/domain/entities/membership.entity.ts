@@ -67,4 +67,13 @@ export class Membership {
       updatedAt: new Date(),
     });
   }
+
+  deactivate(endDate: Date): Membership {
+    return Membership.create({
+      ...this.props,
+      status: 'INACTIVE',
+      endDate,
+      updatedAt: new Date(),
+    });
+  }
 }

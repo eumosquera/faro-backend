@@ -76,6 +76,7 @@ describe('CreateMembershipUseCase', () => {
     membershipRepository = {
       save: jest.fn(),
       findById: jest.fn(),
+      findActiveByPersonId: jest.fn(),
       findActiveByPersonAndResidentialComplex: jest.fn(),
       findActiveByAccessAccountAndResidentialComplex: jest.fn(),
     };

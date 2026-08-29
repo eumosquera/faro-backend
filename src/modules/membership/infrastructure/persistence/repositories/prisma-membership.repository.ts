@@ -49,6 +49,18 @@ export class PrismaMembershipRepository implements MembershipRepository {
     return record ? this.toDomain(record) : null;
   }
 
+  async findActiveByPersonId(personId: string): Promise<Membership[]> {
+    const records = await this.prisma.membership.findMany({
+      where: {
+        personId,
+        status: 'ACTIVE',
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return records.map((record) => this.toDomain(record));
+  }
+
   async findActiveByPersonAndResidentialComplex(
     personId: string,
     residentialComplexId: string,

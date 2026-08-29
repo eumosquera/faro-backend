@@ -13,6 +13,7 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { AccessModule } from './modules/access/access.module';
 import { MembershipModule } from './modules/membership/membership.module';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { OnboardingModule } from './modules/onboarding/onboarding.module';
     AccessModule,
     MembershipModule,
     OnboardingModule,
+    ProfileModule,
   ],
   controllers: [HealthController],
   providers: [],

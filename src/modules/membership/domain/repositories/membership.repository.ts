@@ -5,6 +5,8 @@ export abstract class MembershipRepository {
 
   abstract findById(id: string): Promise<Membership | null>;
 
+  abstract findActiveByPersonId(personId: string): Promise<Membership[]>;
+
   abstract findActiveByPersonAndResidentialComplex(
     personId: string,
     residentialComplexId: string,

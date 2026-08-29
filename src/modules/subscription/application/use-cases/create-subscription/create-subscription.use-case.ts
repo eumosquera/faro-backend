@@ -57,7 +57,7 @@ export class CreateSubscriptionUseCase {
       startDate: dto.startDate,
       endDate: null,
       nextBillingDate,
-      status: 'ACTIVE',
+      status: dto.status ?? 'ACTIVE',
     });
 
     await this.subscriptionRepository.save(subscription);

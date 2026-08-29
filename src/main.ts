@@ -17,6 +17,11 @@ async function bootstrap(): Promise<void> {
 
   app.setGlobalPrefix('api');
 
+  app.enableCors({
+    origin: configService.get('FRONTEND_URL', { infer: true }),
+    credentials: true,
+  });
+
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',

@@ -48,6 +48,7 @@ describe('DeactivateMembershipUseCase', () => {
     saveSpy.mockImplementation((value) => Promise.resolve(value));
     const result = await useCase.execute({
       membershipId: membership.id,
+      residentialComplexId: membership.residentialComplexId,
       endDate,
     });
 
@@ -84,6 +85,7 @@ describe('DeactivateMembershipUseCase', () => {
 
     const result = await useCase.execute({
       membershipId: membership.id,
+      residentialComplexId: membership.residentialComplexId,
     });
 
     const after = new Date();
@@ -102,6 +104,7 @@ describe('DeactivateMembershipUseCase', () => {
     await expect(
       useCase.execute({
         membershipId: 'non-existent-membership',
+        residentialComplexId: 'complex-1',
       }),
     ).rejects.toBeInstanceOf(MembershipNotFoundError);
 

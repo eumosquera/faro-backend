@@ -2563,6 +2563,323 @@ describe('Application (e2e)', () => {
     expect(membership?.status).toBe('ACTIVE');
   });
 
+  it('/api/v1/residential-complexes/:residentialComplexId/memberships/:membershipId/deactivate (PATCH) authorizes user with required permission', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-MEMBERSHIP-DEACTIVATE-${Date.now()}`,
+        fullName: 'Membership Deactivate Authorized User',
+        email: `membership-deactivate-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-MEMBERSHIP-DEACTIVATE-ROLE-${Date.now()}`,
+        name: 'Membership Deactivate Role',
+        description: 'Rol autorizado para desactivar memberships.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'MEMBERSHIP_DEACTIVATE',
+        name: 'Desactivar memberships',
+        description: 'Permite desactivar memberships.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    const membershipResponse = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const membershipId = getResponseId(membershipResponse);
+
+    const response = await request(app.getHttpServer())
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/${membershipId}/deactivate`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`)
+      .expect(200);
+
+    const body = response.body as { status: string };
+
+    expect(body.status).toBe('INACTIVE');
+  }, 15000);
+
+  it('/api/v1/residential-complexes/:residentialComplexId/memberships/:membershipId/deactivate (PATCH) rejects user without required permission', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-MEMBERSHIP-DEACTIVATE-NO-PERM-${Date.now()}`,
+        fullName: 'Membership Deactivate Without Permission',
+        email: `membership-deactivate-no-perm-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-MEMBERSHIP-DEACTIVATE-NO-PERM-ROLE-${Date.now()}`,
+        name: 'Membership Deactivate Without Permission Role',
+        description: 'Rol sin permiso de desactivación.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const membershipResponse = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const membershipId = getResponseId(membershipResponse);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/${membershipId}/deactivate`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`)
+      .expect(403);
+  }, 15000);
+
+  it('/api/v1/residential-complexes/:residentialComplexId/memberships/:membershipId/deactivate (PATCH) rejects missing authentication', async () => {
+    await request(app.getHttpServer())
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/non-existent-membership/deactivate`,
+      )
+      .expect(401);
+  }, 15000);
+
+  it('/api/v1/residential-complexes/:residentialComplexId/memberships/:membershipId/deactivate (PATCH) rejects membership from another residential complex', async () => {
+    const authentication = await getTestAuthentication();
+
+    const secondResidentialComplexResponse = await request(app.getHttpServer())
+      .post('/api/v1/residential-complexes')
+      .send({
+        name: `E2E Membership Deactivate Complex B ${Date.now()}`,
+        address: 'Carrera 50 # 50-50',
+        city: 'Cali',
+      })
+      .expect(201);
+
+    const secondResidentialComplexId = getResponseId(secondResidentialComplexResponse);
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-MEMBERSHIP-DEACTIVATE-OTHER-${Date.now()}`,
+        fullName: 'Membership Deactivate Other Complex',
+        email: `membership-deactivate-other-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-MEMBERSHIP-DEACTIVATE-OTHER-ROLE-${Date.now()}`,
+        name: 'Membership Deactivate Other Complex Role',
+        description: 'Rol para probar aislamiento de memberships.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'MEMBERSHIP_DEACTIVATE',
+        name: 'Desactivar memberships',
+        description: 'Permite desactivar memberships.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    // Membership que otorga contexto de autorización en el complejo principal.
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    // Membership objetivo: pertenece a otro complejo.
+    const targetMembershipResponse = await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId: secondResidentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    const targetMembershipId = getResponseId(targetMembershipResponse);
+
+    const response = await request(app.getHttpServer())
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/${targetMembershipId}/deactivate`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`);
+
+    expect(response.status).toBe(409);
+  }, 15000);
+
+  it('/api/v1/residential-complexes/:residentialComplexId/memberships/:membershipId/deactivate (PATCH) rejects missing membership', async () => {
+    const authentication = await getTestAuthentication();
+
+    const personResponse = await request(app.getHttpServer())
+      .post('/api/v1/people')
+      .send({
+        identificationType: 'CC',
+        identificationNumber: `E2E-MEMBERSHIP-DEACTIVATE-NOT-FOUND-${Date.now()}`,
+        fullName: 'Membership Deactivate Not Found',
+        email: `membership-deactivate-not-found-${Date.now()}@example.com`,
+      })
+      .expect(201);
+
+    const personId = getResponseId(personResponse);
+
+    const accessAccountResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-accounts')
+      .send({
+        personId,
+        externalAuthId: authentication.userId,
+      })
+      .expect(201);
+
+    const accessAccountId = getResponseId(accessAccountResponse);
+
+    const accessRoleResponse = await request(app.getHttpServer())
+      .post('/api/v1/access-roles')
+      .send({
+        code: `E2E-MEMBERSHIP-DEACTIVATE-NOT-FOUND-ROLE-${Date.now()}`,
+        name: 'Membership Deactivate Not Found Role',
+        description: 'Rol para probar membership inexistente.',
+      })
+      .expect(201);
+
+    const accessRoleId = getResponseId(accessRoleResponse);
+
+    const permissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'MEMBERSHIP_DEACTIVATE',
+        name: 'Desactivar memberships',
+        description: 'Permite desactivar memberships.',
+      })
+      .expect(201);
+
+    const permissionId = getResponseId(permissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId,
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/api/v1/memberships')
+      .send({
+        personId,
+        residentialComplexId,
+        accessAccountId,
+        accessRoleId,
+        startDate: '2026-08-23',
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/non-existent-membership/deactivate`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`)
+      .expect(404);
+  }, 15000);
+
   it('/api/v1/person-units (POST) creates a person-unit relationship', async () => {
     const personResponse = await request(app.getHttpServer())
       .post('/api/v1/people')
@@ -3885,6 +4202,23 @@ describe('Application (e2e)', () => {
       })
       .expect(201);
 
+    const deactivatePermissionResponse = await request(app.getHttpServer())
+      .post('/api/v1/permissions')
+      .send({
+        code: 'MEMBERSHIP_DEACTIVATE',
+        name: 'Desactivar memberships',
+        description: 'Permite desactivar memberships.',
+      })
+      .expect(201);
+
+    const deactivatePermissionId = getResponseId(deactivatePermissionResponse);
+
+    await request(app.getHttpServer())
+      .post(`/api/v1/access-roles/${accessRoleId}/permissions`)
+      .send({
+        permissionId: deactivatePermissionId,
+      })
+      .expect(201);
     const membershipResponse = await request(app.getHttpServer())
       .post('/api/v1/memberships')
       .send({
@@ -3899,7 +4233,10 @@ describe('Application (e2e)', () => {
     const membershipId = getResponseId(membershipResponse);
 
     await request(app.getHttpServer())
-      .patch(`/api/v1/memberships/${membershipId}/deactivate`)
+      .patch(
+        `/api/v1/residential-complexes/${residentialComplexId}/memberships/${membershipId}/deactivate`,
+      )
+      .set('Authorization', `Bearer ${authentication.accessToken}`)
       .expect(200);
 
     const response = await request(app.getHttpServer())

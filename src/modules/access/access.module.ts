@@ -114,6 +114,14 @@ import { PrismaAuthorizationContextRepository } from './infrastructure/persisten
     RemovePermissionFromAccessRoleUseCase,
     AccessRoleRepository,
     AccessAccountRepository,
+    AuthenticationGuard,
+    AuthorizationGuard,
+    AuthenticationContextService,
+    AuthorizationService,
+    EXTERNAL_AUTHENTICATION_SERVICE,
+    AUTHENTICATED_USER_REPOSITORY,
+    AUTHORIZATION_CONTEXT_REPOSITORY,
+    CreateAccessAccountUseCase,
   ],
 })
 export class AccessModule {}

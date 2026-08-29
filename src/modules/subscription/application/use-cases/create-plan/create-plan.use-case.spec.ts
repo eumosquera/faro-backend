@@ -20,6 +20,7 @@ describe('CreatePlanUseCase', () => {
     planRepository = {
       findById: jest.fn(),
       findByCode: jest.fn(),
+      findAll: jest.fn(),
       save: jest.fn(),
     };
 

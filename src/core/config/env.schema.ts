@@ -9,6 +9,8 @@ export const envSchema = z.object({
 
   SUPABASE_URL: z.string().url(),
   SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
+
+  FRONTEND_URL: z.string().url().default('http://localhost:3000'),
 });
 
 export type EnvSchema = z.infer<typeof envSchema>;

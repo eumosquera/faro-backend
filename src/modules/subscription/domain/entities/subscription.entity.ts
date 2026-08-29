@@ -1,6 +1,7 @@
 export type BillingCycle = 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
 
-export type SubscriptionStatus = 'ACTIVE' | 'GRACE_PERIOD' | 'EXPIRED' | 'CANCELLED';
+export type SubscriptionStatus =
+  'PENDING_PAYMENT' | 'ACTIVE' | 'GRACE_PERIOD' | 'EXPIRED' | 'CANCELLED';
 
 export interface SubscriptionProps {
   id: string;

@@ -12,6 +12,7 @@ import { PeopleModule } from './modules/people/people.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { AccessModule } from './modules/access/access.module';
 import { MembershipModule } from './modules/membership/membership.module';
+import { OnboardingModule } from './modules/onboarding/onboarding.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MembershipModule } from './modules/membership/membership.module';
     SubscriptionModule,
     AccessModule,
     MembershipModule,
+    OnboardingModule,
   ],
   controllers: [HealthController],
   providers: [],

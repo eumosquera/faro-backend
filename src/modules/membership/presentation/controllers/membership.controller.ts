@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { Param, Patch } from '@nestjs/common';
 
 import { CreateMembershipUseCase } from '../../application/use-cases/create-membership/create-membership.use-case';
 
@@ -24,15 +23,6 @@ export class MembershipController {
       accessRoleId: request.accessRoleId,
       startDate: new Date(request.startDate),
       endDate: request.endDate ? new Date(request.endDate) : null,
-    });
-
-    return new MembershipResponse(membership);
-  }
-
-  @Patch(':membershipId/deactivate')
-  async deactivate(@Param('membershipId') membershipId: string): Promise<MembershipResponse> {
-    const membership = await this.deactivateMembershipUseCase.execute({
-      membershipId,
     });
 
     return new MembershipResponse(membership);

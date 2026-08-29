@@ -45,6 +45,7 @@ enum SubscriptionStatus {
   GRACE_PERIOD
   EXPIRED
   CANCELLED
+  PENDING_PAYMENT
 }
 
 enum ResidentialComplexStatus {
@@ -104,6 +105,8 @@ model Plan {
   yearlyPrice    Decimal    @db.Decimal(10, 2)
   quarterlyPrice Decimal    @db.Decimal(10, 2)
   status         PlanStatus @default(ACTIVE)
+  isPublic       Boolean    @default(true)
+  trialDays      Int        @default(0)
 
   subscriptions Subscription[]
 
@@ -215,7 +218,7 @@ model Subscription {
   startDate       DateTime
   endDate         DateTime?
   nextBillingDate DateTime?
-  status          SubscriptionStatus @default(ACTIVE)
+  status          SubscriptionStatus @default(PENDING_PAYMENT)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

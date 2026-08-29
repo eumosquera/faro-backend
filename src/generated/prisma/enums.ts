@@ -59,7 +59,8 @@ export const SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   GRACE_PERIOD: 'GRACE_PERIOD',
   EXPIRED: 'EXPIRED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  PENDING_PAYMENT: 'PENDING_PAYMENT'
 } as const
 
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]

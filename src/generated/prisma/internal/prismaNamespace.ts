@@ -1440,6 +1440,8 @@ export const PlanScalarFieldEnum = {
   yearlyPrice: 'yearlyPrice',
   quarterlyPrice: 'quarterlyPrice',
   status: 'status',
+  isPublic: 'isPublic',
+  trialDays: 'trialDays',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1692,6 +1694,13 @@ export type EnumPlanStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'PlanStatus[]'
  */
 export type ListEnumPlanStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

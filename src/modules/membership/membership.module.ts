@@ -12,10 +12,11 @@ import { PrismaMembershipRepository } from './infrastructure/persistence/reposit
 
 import { MembershipController } from './presentation/controllers/membership.controller';
 import { DeactivateMembershipUseCase } from './application/use-cases/deactivate-membership/deactivate-membership.use-case';
+import { ResidentialComplexMembershipController } from './presentation/controllers/residential-complex-membership.controller';
 
 @Module({
   imports: [PeopleModule, AccessModule, StructureModule],
-  controllers: [MembershipController],
+  controllers: [MembershipController, ResidentialComplexMembershipController],
   providers: [
     PrismaMembershipRepository,
     {

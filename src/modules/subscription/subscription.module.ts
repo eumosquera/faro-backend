@@ -11,6 +11,7 @@ import { PlanRepository } from './domain/repositories/plan.repository';
 import { PrismaPlanRepository } from './infrastructure/persistence/repositories/prisma-plan.repository';
 import { PlanController } from './presentation/controllers/plan.controller';
 import { CreatePlanUseCase } from './application/use-cases/create-plan/create-plan.use-case';
+import { ListPlansUseCase } from './application/use-cases/list-plans/list-plans.use-case';
 
 @Module({
   imports: [PeopleModule],
@@ -22,6 +23,7 @@ import { CreatePlanUseCase } from './application/use-cases/create-plan/create-pl
       useExisting: PrismaPlanRepository,
     },
     CreatePlanUseCase,
+    ListPlansUseCase,
 
     PrismaSubscriptionRepository,
     {
@@ -31,6 +33,6 @@ import { CreatePlanUseCase } from './application/use-cases/create-plan/create-pl
 
     CreateSubscriptionUseCase,
   ],
-  exports: [CreateSubscriptionUseCase],
+  exports: [CreateSubscriptionUseCase, PlanRepository],
 })
 export class SubscriptionModule {}

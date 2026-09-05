@@ -1,9 +1,19 @@
 export interface GetMyApplicationAccessResult {
   hasApplicationAccess: boolean;
+  memberships: ApplicationAccessMembership[];
+}
 
-  memberships: {
-    membershipId: string;
-    residentialComplexId: string;
-    accessRoleId: string;
-  }[];
+export interface ApplicationAccessMembership {
+  membershipId: string;
+
+  residentialComplex: {
+    id: string;
+    name: string;
+  };
+
+  accessRole: {
+    id: string;
+    code: string;
+    name: string;
+  };
 }

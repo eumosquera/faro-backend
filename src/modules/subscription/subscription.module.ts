@@ -33,6 +33,6 @@ import { ListPlansUseCase } from './application/use-cases/list-plans/list-plans.
 
     CreateSubscriptionUseCase,
   ],
-  exports: [CreateSubscriptionUseCase, PlanRepository],
+  exports: [CreateSubscriptionUseCase, PlanRepository, SubscriptionRepository],
 })
 export class SubscriptionModule {}

@@ -6,7 +6,6 @@ import { MembershipModule } from '../membership/membership.module';
 import { StructureModule } from '../structure/structure.module';
 
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { SupabaseModule } from '../../core/auth/supabase.module';
 import { GetMyProfileUseCase } from './application/use-cases/get-my-profile/get-my-profile.use-case';
 import { ProfileController } from './presentation/controllers/profile.controller';
 
@@ -14,14 +13,7 @@ import { GetMyApplicationAccessUseCase } from './application/use-cases/get-my-ap
 import { AddResidentialComplexUseCase } from './application/use-cases/add-residential-complex/add-residential-complex.use-case';
 
 @Module({
-  imports: [
-    AccessModule,
-    PeopleModule,
-    MembershipModule,
-    StructureModule,
-    SupabaseModule,
-    SubscriptionModule,
-  ],
+  imports: [AccessModule, PeopleModule, MembershipModule, StructureModule, SubscriptionModule],
   controllers: [ProfileController],
   providers: [GetMyProfileUseCase, GetMyApplicationAccessUseCase, AddResidentialComplexUseCase],
 })

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createSupabaseClient } from '../../core/auth/infrastructure/supabase-client';
+import { SupabaseModule } from '../../core/auth/supabase.module';
+import { SUPABASE_CLIENT } from '../../core/auth/infrastructure/supabase.tokens';
 import { SUPABASE_AUTH_CLIENT } from './infrastructure/authentication/supabase-auth-client.token';
 
 import { CreateAccessRoleUseCase } from './application/use-cases/create-access-role/create-access-role.use-case';
@@ -34,6 +34,7 @@ import { PrismaAuthenticatedUserRepository } from './infrastructure/persistence/
 import { AUTHENTICATED_USER_REPOSITORY } from './domain/repositories/authenticated-user.repository.token';
 import { AuthenticationGuard } from './presentation/guards/authentication.guard';
 import { AuthorizationGuard } from './presentation/guards/authorization.guard';
+import { ExternalAuthenticationGuard } from './presentation/guards/external-authentication.guard';
 
 import { AuthorizationTestController } from './presentation/controllers/authorization-test.controller';
 import { AuthorizationService } from './application/authorization/authorization.service';
@@ -41,7 +42,7 @@ import { AUTHORIZATION_CONTEXT_REPOSITORY } from './domain/repositories/authoriz
 import { PrismaAuthorizationContextRepository } from './infrastructure/persistence/repositories/prisma-authorization-context.repository';
 
 @Module({
-  imports: [PeopleModule],
+  imports: [PeopleModule, SupabaseModule],
   controllers: [
     AccessRoleController,
     PermissionController,
@@ -86,6 +87,7 @@ import { PrismaAuthorizationContextRepository } from './infrastructure/persisten
 
     AuthenticationGuard,
     AuthorizationGuard,
+    ExternalAuthenticationGuard,
     {
       provide: EXTERNAL_AUTHENTICATION_SERVICE,
       useClass: SupabaseExternalAuthenticationService,
@@ -94,8 +96,7 @@ import { PrismaAuthorizationContextRepository } from './infrastructure/persisten
 
     {
       provide: SUPABASE_AUTH_CLIENT,
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => createSupabaseClient(configService),
+      useExisting: SUPABASE_CLIENT,
     },
 
     {
@@ -116,6 +117,7 @@ import { PrismaAuthorizationContextRepository } from './infrastructure/persisten
     AccessAccountRepository,
     AuthenticationGuard,
     AuthorizationGuard,
+    ExternalAuthenticationGuard,
     AuthenticationContextService,
     AuthorizationService,
     EXTERNAL_AUTHENTICATION_SERVICE,

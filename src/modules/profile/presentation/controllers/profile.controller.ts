@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 
-import { SupabaseAuthGuard } from '../../../../core/auth/presentation/supabase-auth.guard';
-import type { AuthenticatedIdentity } from '../../../../core/auth/domain/authenticated-identity';
+import { AuthenticationGuard } from '../../../access/presentation/guards/authentication.guard';
+import type { AuthenticatedUser } from '../../../access/presentation/authenticated-user';
+import { ExternalAuthenticationGuard } from '../../../access/presentation/guards/external-authentication.guard';
+import type { ExternallyAuthenticatedRequestUser } from '../../../access/presentation/guards/external-authentication.guard';
 
 import { GetMyProfileUseCase } from '../../application/use-cases/get-my-profile/get-my-profile.use-case';
 import type { GetMyProfileResult } from '../../application/use-cases/get-my-profile/get-my-profile.result';
@@ -14,7 +16,11 @@ import { AddResidentialComplexUseCase } from '../../application/use-cases/add-re
 import { AddResidentialComplexRequest } from './add-residential-complex.request';
 
 interface AuthenticatedRequest extends Request {
-  user: AuthenticatedIdentity;
+  user: AuthenticatedUser;
+}
+
+interface ExternallyAuthenticatedRequest extends Request {
+  user: ExternallyAuthenticatedRequestUser;
 }
 
 @Controller('profile')
@@ -26,27 +32,29 @@ export class ProfileController {
   ) {}
 
   @Get('me')
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(AuthenticationGuard)
   async getMyProfile(@Req() request: AuthenticatedRequest): Promise<GetMyProfileResult> {
-    return this.getMyProfileUseCase.execute(request.user.userId);
+    return this.getMyProfileUseCase.execute(request.user.personId);
   }
 
+  // Guard permisivo a propósito: una cuenta sin acceso (desactivada, sin
+  // membership) debe responder { hasApplicationAccess: false }, no un 401.
   @Get('me/access')
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(ExternalAuthenticationGuard)
   async getMyApplicationAccess(
-    @Req() request: AuthenticatedRequest,
+    @Req() request: ExternallyAuthenticatedRequest,
   ): Promise<GetMyApplicationAccessResult> {
-    return this.getMyApplicationAccessUseCase.execute(request.user.userId);
+    return this.getMyApplicationAccessUseCase.execute(request.user.externalAuthId);
   }
 
   @Post('complexes')
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(AuthenticationGuard)
   async addComplex(
     @Req() request: AuthenticatedRequest,
     @Body() body: AddResidentialComplexRequest,
   ): Promise<{ residentialComplexId: string; membershipId: string }> {
     return this.addResidentialComplexUseCase.execute({
-      externalAuthId: request.user.userId,
+      personId: request.user.personId,
       name: body.name,
       address: body.address,
       city: body.city,

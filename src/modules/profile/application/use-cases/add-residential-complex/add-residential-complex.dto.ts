@@ -1,5 +1,5 @@
 export interface AddResidentialComplexDto {
-  externalAuthId: string;
+  personId: string;
   name: string;
   address: string;
   city: string;

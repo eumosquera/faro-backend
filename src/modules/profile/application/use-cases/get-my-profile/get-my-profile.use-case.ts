@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AccessAccountRepository } from '../../../../access/domain/repositories/access-account.repository';
-import { AccessAccountNotFoundError } from '../../../../access/application/errors/access-account-not-found.error';
 import { AccessRoleRepository } from '../../../../access/domain/repositories/access-role.repository';
 import { PersonRepository } from '../../../../people/domain/repositories/person.repository';
 import { PersonNotFoundError } from '../../../../access/application/errors/person-not-found.error';
@@ -15,7 +13,6 @@ import type { GetMyProfileResult } from './get-my-profile.result';
 @Injectable()
 export class GetMyProfileUseCase {
   constructor(
-    private readonly accessAccountRepository: AccessAccountRepository,
     private readonly personRepository: PersonRepository,
     private readonly membershipRepository: MembershipRepository,
     private readonly residentialComplexRepository: ResidentialComplexRepository,
@@ -24,17 +21,13 @@ export class GetMyProfileUseCase {
     private readonly planRepository: PlanRepository,
   ) {}
 
-  async execute(externalAuthId: string): Promise<GetMyProfileResult> {
-    const accessAccount = await this.accessAccountRepository.findByExternalAuthId(externalAuthId);
-
-    if (!accessAccount) {
-      throw new AccessAccountNotFoundError(externalAuthId);
-    }
-
-    const person = await this.personRepository.findById(accessAccount.personId);
+  // personId ya viene resuelto por AuthenticationGuard — no hace falta
+  // volver a buscar el AccessAccount aquí.
+  async execute(personId: string): Promise<GetMyProfileResult> {
+    const person = await this.personRepository.findById(personId);
 
     if (!person) {
-      throw new PersonNotFoundError(accessAccount.personId);
+      throw new PersonNotFoundError(personId);
     }
 
     const membershipEntities = await this.membershipRepository.findActiveByPersonId(person.id);
